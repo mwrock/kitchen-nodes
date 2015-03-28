@@ -18,8 +18,19 @@
 
 require "kitchen"
 require "kitchen/provisioner/chef_zero"
+require "net/ping"
 
 module Kitchen
+
+  module Transport
+    class Winrm < Kitchen::Transport::Base
+      class Connection < Kitchen::Transport::Base::Connection
+        def node_session(retry_options = {})
+          session(retry_options)
+        end
+      end
+    end
+  end
 
   module Provisioner
 
@@ -39,11 +50,12 @@ module Kitchen
         node_file = File.join(node_dir, "#{instance.name}.json")
 
         state = Kitchen::StateFile.new(config[:kitchen_root], instance.name).read
+        ipaddress = get_reachable_guest_address(state) || state[:hostname]
 
         node = {
           :id => instance.name,
           :automatic => {
-            :ipaddress => state[:hostname]
+            :ipaddress => ipaddress
           },
           :run_list => config[:run_list]
         }
@@ -51,6 +63,15 @@ module Kitchen
         File.open(node_file, 'w') do |out|
           out << JSON.pretty_generate(node)
         end
+      end
+
+      def get_reachable_guest_address(state)
+        instance.transport.connection(state).node_session.run_powershell_script("Get-NetIPConfiguration | % { $_.ipv4address.IPAddress}") do |address, _|
+          address = address.chomp unless address.nil?
+          next if address.nil? || address == "127.0.0.1"
+          return address if Net::Ping::External.new.ping(address)
+        end
+        return nil
       end      
     end
   end
