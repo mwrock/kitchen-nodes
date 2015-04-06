@@ -1,6 +1,7 @@
 require "fakefs/safe"
 require "kitchen"
 require "kitchen/provisioner/nodes"
+require "kitchen/transport/dummy"
 
 describe Kitchen::Provisioner::Nodes do
 
@@ -13,8 +14,10 @@ describe Kitchen::Provisioner::Nodes do
     "instance",
     :name => "test_suite",
     :suite => suite,
-    :platform => platform
+    :platform => platform,
+    :transport => dummy_transport
   ) }
+  let(:dummy_transport) { Kitchen::Transport::Dummy.new }
   let(:platform) { double("platform", :os_type => nil) }
   let(:suite) { double("suite", :name => "suite") }
   let(:state) { { :hostname => "192.168.1.10" } }
@@ -54,5 +57,41 @@ describe Kitchen::Provisioner::Nodes do
     subject.create_node
 
     expect(node[:automatic][:ipaddress]).to eq state[:hostname]
+  end
+
+  context "instance is localhost" do
+    let(:state) { { :hostname => "127.0.0.1" } }
+    let(:machine_ips) { [ "192.168.1.1", "192.168.1.2", "192.168.1.3" ] }
+    let(:dummy_transport) { double("winrm", :connection => dummy_winrm_connection) }
+    let(:dummy_winrm_connection) { double("connection", :node_session => dummy_executor) }
+    let(:dummy_executor) { double("executor") }
+    
+    before {
+      allow(dummy_executor).to receive(:run_powershell_script) do |&block|
+        machine_ips.each do |ip|
+          block.call(ip)
+        end
+      end
+      allow_any_instance_of(Net::Ping::External).to receive(:ping).and_return(true)
+    }
+
+    it "sets the ip address to the first reachable IP" do
+      subject.create_node
+
+      expect(node[:automatic][:ipaddress]).to eq machine_ips.first
+    end
+
+    context "only the last ip is reachable" do
+      before {
+        allow_any_instance_of(Net::Ping::External).to receive(:ping).and_return(false)
+        allow_any_instance_of(Net::Ping::External).to receive(:ping).with(machine_ips.last).and_return(true)
+      }
+
+      it "sets the ip address to the last IP" do
+        subject.create_node
+
+        expect(node[:automatic][:ipaddress]).to eq machine_ips.last
+      end
+    end
   end
 end
