@@ -55,9 +55,13 @@ module Kitchen
         def find_ips
           response = @connection.node_execute("ifconfig -a")
           ips = []
-          response.split(/^\S*/).each do |device|
+          start_token = "inet addr:"
+          response.split(/^\S+/).each do |device|
             if device.include?("RUNNING") && !device.include?("LOOPBACK")
-              ips << device[/inet addr:/]
+              start_idx = device.index(start_token)
+              start_idx += start_token.length unless start_idx.nil?
+              end_idx = device.index(" ", start_idx) unless start_idx.nil?
+              ips << device[start_idx,end_idx - start_idx] unless end_idx.nil?
             end
           end
           ips
