@@ -2,6 +2,8 @@ require "fakefs/safe"
 require "kitchen"
 require "kitchen/provisioner/nodes"
 require "kitchen/transport/dummy"
+require "kitchen/transport/winrm"
+require "kitchen/transport/ssh"
 
 describe Kitchen::Provisioner::Nodes do
 
@@ -15,9 +17,9 @@ describe Kitchen::Provisioner::Nodes do
     :name => "test_suite",
     :suite => suite,
     :platform => platform,
-    :transport => dummy_transport
+    :transport => transport
   ) }
-  let(:dummy_transport) { Kitchen::Transport::Dummy.new }
+  let(:transport) { Kitchen::Transport::Dummy.new }
   let(:platform) { double("platform", :os_type => nil) }
   let(:suite) { double("suite", :name => "suite") }
   let(:state) { { :hostname => "192.168.1.10" } }
@@ -65,19 +67,13 @@ describe Kitchen::Provisioner::Nodes do
     
     before {
       allow_any_instance_of(Net::Ping::External).to receive(:ping).and_return(true)
+      allow(transport).to receive(:connection).and_return(Kitchen::Transport::Base::Connection.new)
+      allow_any_instance_of(Kitchen::Transport::Base::Connection).to(
+        receive(:node_execute).and_return(machine_ips)
+      )
     }
     context "platform is windows" do
-      let(:dummy_transport) { double("winrm", :connection => dummy_winrm_connection) }
-      let(:dummy_winrm_connection) { double("connection", :node_session => dummy_executor) }
-      let(:dummy_executor) { double("executor") }
-
-      before {
-        allow(dummy_executor).to receive(:run_powershell_script) do |&block|
-          machine_ips.each do |ip|
-            block.call(ip)
-          end
-        end
-      }
+      let(:transport) { Kitchen::Transport::Winrm.new }
 
       it "sets the ip address to the first reachable IP" do
         subject.create_node
@@ -96,6 +92,49 @@ describe Kitchen::Provisioner::Nodes do
 
           expect(node[:automatic][:ipaddress]).to eq machine_ips.last
         end
+      end
+    end
+
+    context "platform is *nix" do
+      let(:transport) { Kitchen::Transport::Ssh.new }
+
+      before {
+        allow_any_instance_of(Kitchen::Transport::Base::Connection).to receive(:node_execute) do
+          <<-EOS
+docker0   Link encap:Ethernet  HWaddr 56:84:7a:fe:97:99  
+          inet addr:#{machine_ips[0]}  Bcast:0.0.0.0  Mask:255.255.0.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+eth0      Link encap:Ethernet  HWaddr 08:00:27:88:0c:a6  
+          inet addr:#{machine_ips[1]}  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe88:ca6/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:10262 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:7470 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:1497781 (1.4 MB)  TX bytes:1701791 (1.7 MB)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+          EOS
+        end
+      }
+
+      it "sets the ip address to the RUNNING IP that is not localhost" do
+        subject.create_node
+
+        expect(node[:automatic][:ipaddress]).to eq machine_ips[1]
       end
     end
   end

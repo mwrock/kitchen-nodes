@@ -18,61 +18,10 @@
 
 require "kitchen"
 require "kitchen/provisioner/chef_zero"
+require "kitchen/provisioner/ip_finder"
 require "net/ping"
 
 module Kitchen
-
-  module Transport
-    class Winrm < Kitchen::Transport::Base
-      class Connection < Kitchen::Transport::Base::Connection
-        def node_session(retry_options = {})
-          session(retry_options)
-        end
-      end
-    end
-
-    class Ssh < Kitchen::Transport::Base
-      class Connection < Kitchen::Transport::Base::Connection
-        def node_execute(command, &block)
-          return if command.nil?
-          exit_code = node_execute_with_exit_code(command, &block)
-
-          if exit_code != 0
-            raise Transport::SshFailed,
-              "SSH exited (#{exit_code}) for command: [#{command}]"
-          end
-        rescue Net::SSH::Exception => ex
-          raise SshFailed, "SSH command failed (#{ex.message})"
-        end
-
-        def node_execute_with_exit_code(command, &block)
-          exit_code = nil
-          session.open_channel do |channel|
-
-            channel.request_pty
-
-            channel.exec(command) do |_ch, _success|
-
-              channel.on_data do |_ch, data|
-                yield data
-              end
-
-              channel.on_extended_data do |_ch, _type, data|
-                yield data
-              end
-
-              channel.on_request("exit-status") do |_ch, data|
-                exit_code = data.read_long
-              end
-            end
-          end
-          session.loop
-          exit_code
-        end
-      end
-    end
-  end
-
   module Provisioner
 
     # Nodes provisioner for Kitchen.
@@ -110,7 +59,7 @@ module Kitchen
       end
 
       def get_reachable_guest_address(state)
-        instance.transport.connection(state).node_session.run_powershell_script("Get-NetIPConfiguration | % { $_.ipv4address.IPAddress}") do |address, _|
+        active_ips(instance.transport, state).each do |address|
           address = address.chomp unless address.nil?
           next if address.nil? || address == "127.0.0.1"
           return address if Net::Ping::External.new.ping(address)
@@ -118,15 +67,9 @@ module Kitchen
         return nil
       end
 
-      # This would be the equivilent of the above to call into a linux guest
-      # def get_reachable_linux_guest_address(state)
-      #   instance.transport.connection(state).node_execute("blah blah blah and more blah") do |address|
-      #     address = address.chomp unless address.nil?
-      #     next if address.nil? || address == "127.0.0.1"
-      #     return address if Net::Ping::External.new.ping(address)
-      #   end
-      #   return nil
-      # end
+      def active_ips(transport, state)
+        IpFinder.for_transport(transport, state).find_ips
+      end
     end
   end
 end
