@@ -60,8 +60,7 @@ module Kitchen
 
       def get_reachable_guest_address(state)
         active_ips(instance.transport, state).each do |address|
-          address = address.chomp unless address.nil?
-          next if address.nil? || address == "127.0.0.1"
+          next if address == "127.0.0.1"
           return address if Net::Ping::External.new.ping(address)
         end
         return nil
