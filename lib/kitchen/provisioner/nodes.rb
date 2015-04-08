@@ -30,6 +30,47 @@ module Kitchen
         end
       end
     end
+
+    class Ssh < Kitchen::Transport::Base
+      class Connection < Kitchen::Transport::Base::Connection
+        def node_execute(command, &block)
+          return if command.nil?
+          exit_code = node_execute_with_exit_code(command, &block)
+
+          if exit_code != 0
+            raise Transport::SshFailed,
+              "SSH exited (#{exit_code}) for command: [#{command}]"
+          end
+        rescue Net::SSH::Exception => ex
+          raise SshFailed, "SSH command failed (#{ex.message})"
+        end
+
+        def node_execute_with_exit_code(command, &block)
+          exit_code = nil
+          session.open_channel do |channel|
+
+            channel.request_pty
+
+            channel.exec(command) do |_ch, _success|
+
+              channel.on_data do |_ch, data|
+                yield data
+              end
+
+              channel.on_extended_data do |_ch, _type, data|
+                yield data
+              end
+
+              channel.on_request("exit-status") do |_ch, data|
+                exit_code = data.read_long
+              end
+            end
+          end
+          session.loop
+          exit_code
+        end
+      end
+    end
   end
 
   module Provisioner
@@ -75,7 +116,17 @@ module Kitchen
           return address if Net::Ping::External.new.ping(address)
         end
         return nil
-      end      
+      end
+
+      # This would be the equivilent of the above to call into a linux guest
+      # def get_reachable_linux_guest_address(state)
+      #   instance.transport.connection(state).node_execute("blah blah blah and more blah") do |address|
+      #     address = address.chomp unless address.nil?
+      #     next if address.nil? || address == "127.0.0.1"
+      #     return address if Net::Ping::External.new.ping(address)
+      #   end
+      #   return nil
+      # end
     end
   end
 end
