@@ -17,10 +17,10 @@ module Kitchen
 
         def node_execute_with_exit_code(command, &block)
           exit_code = nil
+          out = []
           session.open_channel do |channel|
 
             channel.request_pty
-            out = []
             channel.exec(command) do |_ch, _success|
 
               channel.on_data do |_ch, data|
