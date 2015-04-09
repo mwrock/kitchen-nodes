@@ -68,12 +68,16 @@ describe Kitchen::Provisioner::Nodes do
     before {
       allow_any_instance_of(Net::Ping::External).to receive(:ping).and_return(true)
       allow(transport).to receive(:connection).and_return(Kitchen::Transport::Base::Connection.new)
-      allow_any_instance_of(Kitchen::Transport::Base::Connection).to(
-        receive(:node_execute).and_return(machine_ips)
-      )
     }
     context "platform is windows" do
       let(:transport) { Kitchen::Transport::Winrm.new }
+
+      before {
+        data = machine_ips.map {|ip| { :stdout => "#{ip}\r\n" }}
+        allow_any_instance_of(Kitchen::Transport::Base::Connection).to(
+          receive(:node_execute).and_return({ :data => data })
+        )
+      }
 
       it "sets the ip address to the first reachable IP" do
         subject.create_node
