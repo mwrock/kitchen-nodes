@@ -30,6 +30,7 @@ module Kitchen
     class Nodes < ChefZero
 
       def create_sandbox
+        FileUtils.rm(node_file) if File.exist?(node_file)
         super
         create_node
       end
@@ -47,14 +48,17 @@ module Kitchen
           :run_list => config[:run_list]
         }
 
+        FileUtils.mkdir_p(node_dir) unless Dir.exist?(node_dir)
         File.open(node_file, 'w') do |out|
           out << JSON.pretty_generate(node)
         end
       end
 
+      def node_dir
+        File.join(config[:test_base_path], "nodes")
+      end
+
       def node_file
-        node_dir = File.join(config[:test_base_path], "nodes")
-        Dir.mkdir(node_dir) unless Dir.exist?(node_dir)
         File.join(node_dir, "#{instance.name}.json")
       end
 
