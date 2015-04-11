@@ -37,7 +37,7 @@ module Kitchen
       def create_node
         state = Kitchen::StateFile.new(config[:kitchen_root], instance.name).read
         ip = state[:hostname]
-        ipaddress = ip == "127.0.0.1" ? get_reachable_guest_address(state) : ip
+        ipaddress = (ip == "127.0.0.1" || ip == "localhost") ? get_reachable_guest_address(state) : ip
 
         node = {
           :id => instance.name,
@@ -67,6 +67,9 @@ module Kitchen
       end
 
       def active_ips(transport, state)
+        # inject creds into state for legacy drivers
+        state[:password] = instance.driver[:password] if instance.driver[:password]
+        state[:username] = instance.driver[:username] if instance.driver[:username]
         IpFinder.for_transport(transport, state).find_ips
       end
     end

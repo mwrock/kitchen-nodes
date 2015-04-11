@@ -1,5 +1,6 @@
 require "fakefs/safe"
 require "kitchen"
+require "kitchen/driver/dummy"
 require "kitchen/provisioner/nodes"
 require "kitchen/transport/dummy"
 require "kitchen/transport/winrm"
@@ -17,7 +18,8 @@ describe Kitchen::Provisioner::Nodes do
     :name => "test_suite",
     :suite => suite,
     :platform => platform,
-    :transport => transport
+    :transport => transport,
+    :driver => Kitchen::Driver::Dummy.new
   ) }
   let(:transport) { Kitchen::Transport::Dummy.new }
   let(:platform) { double("platform", :os_type => nil) }
@@ -139,6 +141,35 @@ lo        Link encap:Local Loopback
         subject.create_node
 
         expect(node[:automatic][:ipaddress]).to eq machine_ips[1]
+      end
+
+      context "ifconfig not supported" do
+        before {
+          allow_any_instance_of(Kitchen::Transport::Base::Connection)
+          .to receive(:node_execute).with("ifconfig -a")
+          .and_raise(Kitchen::Transport::TransportFailed.new(""))
+
+          allow_any_instance_of(Kitchen::Transport::Base::Connection)
+          .to receive(:node_execute).with("ip -4 addr show") do
+            <<-EOS
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default 
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet #{machine_ips[0]}/24 brd 192.168.1.255 scope global wlan0
+       valid_lft forever preferred_lft forever
+5: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    inet #{machine_ips[1]}/16 scope global docker0
+       valid_lft forever preferred_lft forever
+            EOS
+          end
+        }
+
+        it "sets the ip address to the connected IP that is not localhost" do
+          subject.create_node
+
+          expect(node[:automatic][:ipaddress]).to eq machine_ips[0]
+        end
       end
     end
   end

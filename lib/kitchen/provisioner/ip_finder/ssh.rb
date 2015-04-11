@@ -53,6 +53,12 @@ module Kitchen
         end
 
         def find_ips
+          run_ifconfig
+        rescue Kitchen::Transport::TransportFailed
+          run_ip_addr
+        end
+
+        def run_ifconfig
           response = @connection.node_execute("ifconfig -a")
           ips = []
           start_token = "inet addr:"
@@ -61,6 +67,21 @@ module Kitchen
               start_idx = device.index(start_token)
               start_idx += start_token.length unless start_idx.nil?
               end_idx = device.index(" ", start_idx) unless start_idx.nil?
+              ips << device[start_idx,end_idx - start_idx] unless end_idx.nil?
+            end
+          end
+          ips
+        end
+
+        def run_ip_addr
+          response = @connection.node_execute("ip -4 addr show")
+          ips = []
+          start_token = "inet "
+          response.split(/[0-9]+: /).each do |device|
+            unless device.include?("LOOPBACK") || device.include?("NO-CARRIER")
+              start_idx = device.index(start_token)
+              start_idx += start_token.length unless start_idx.nil?
+              end_idx = device.index("/", start_idx) unless start_idx.nil?
               ips << device[start_idx,end_idx - start_idx] unless end_idx.nil?
             end
           end
