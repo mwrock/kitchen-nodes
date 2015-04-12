@@ -53,9 +53,19 @@ module Kitchen
         end
 
         def find_ips
-          run_ifconfig
-        rescue Kitchen::Transport::TransportFailed
-          run_ip_addr
+          ips = []
+          retry_count = 0
+
+          while retry_count < 5
+            begin
+              ips = run_ifconfig
+            rescue Kitchen::Transport::TransportFailed
+              ips = run_ip_addr
+            end
+            return ips unless ips.empty?
+            retry_count += 1
+            sleep 0.5
+          end
         end
 
         def run_ifconfig
