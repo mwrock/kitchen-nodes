@@ -43,7 +43,8 @@ module Kitchen
         node = {
           :id => instance.name,
           :automatic => {
-            :ipaddress => ipaddress
+            :ipaddress => ipaddress,
+            :platform => instance.platform.name.split("-")[0].downcase
           },
           :run_list => config[:run_list]
         }
