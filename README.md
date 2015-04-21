@@ -2,18 +2,81 @@
 
 A Test Kitchen Provisioner that generates searchable Nodes.
 
+The nodes provisioner extends the `chef-zero` provisioner along with all of its functionality and configuration. `chef-zero` can support chef searches by querying against node data stored in json files inside of the kitchen `nodes` folder. The `kitchen-nodes` plugin automatically generates a node file when a test instance is provisioned by test-kitchen.
+
+### Example nodes:
+
+```
+{
+  "id": "server-community-ubuntu-1204",
+  "automatic": {
+    "ipaddress": "172.17.0.8",
+    "platform": "ubuntu"
+  },
+  "run_list": [
+    "recipe[apt]",
+    "recipe[couchbase-tests::ipaddress]",
+    "recipe[couchbase::server]",
+    "recipe[export-node]"
+  ]
+}
+
+{
+  "id": "second-node-ubuntu-1204",
+  "automatic": {
+    "ipaddress": "172.17.0.9",
+    "platform": "ubuntu"
+  },
+  "run_list": [
+    "recipe[apt]",
+    "recipe[couchbase-tests::ipaddress]",
+    "recipe[couchbase-tests::default]",
+    "recipe[export-node]"
+  ]
+}
+```
+
 ## <a name="installation"></a> Installation and Setup
 
 Please read the [Driver usage][driver_usage] page for more details.
 
 ## <a name="config"></a> Configuration
 
+Use `nodes` instead of `chef-zero` for the kitchen provisioner name.
+
 ```
 provisioner:
   name: nodes
 ```
 
-The nodes provisioner extends the `chef-zero` provisioner along with all of its functionality and configuration.
+## <a name="installation"></a> Usage
+
+Using `kitchen-nodes` one can expect all previously converged nodes to be represented in a node file and be searchable. For example consider this scenario looking for a primary node in a cluster in order to add a node to join:
+
+```
+require 'timeout'
+
+def search_for_nodes(query, timeout = 120)
+  nodes = []
+  Timeout::timeout(timeout) do
+    nodes = search(:node, query)
+    until  nodes.count > 0 && nodes[0].has_key?('ipaddress')
+      sleep 5
+      nodes = search(:node, query)
+    end
+  end
+
+  if nodes.count == 0 || !nodes[0].has_key?('ipaddress')
+    raise "Unable to find nodes!"
+  end
+
+  nodes
+end
+
+primary = search_for_nodes("run_list:*couchbase??server* AND platform:#{node['platform']}")
+node.normal["couchbase-tests"]["primary_ip"] = primary[0]['ipaddress']
+
+```
 
 ## <a name="development"></a> Development
 
@@ -39,9 +102,9 @@ Created and maintained by [Matt Wrock][author] (<matt@mattwrock.com>)
 Apache 2.0 (see [LICENSE][license])
 
 
-[author]:           https://github.com/enter-github-user
-[issues]:           https://github.com/enter-github-user/kitchen-nodes/issues
-[license]:          https://github.com/enter-github-user/kitchen-nodes/blob/master/LICENSE
-[repo]:             https://github.com/enter-github-user/kitchen-nodes
+[author]:           https://github.com/mwrock
+[issues]:           https://github.com/mwrock/kitchen-nodes/issues
+[license]:          https://github.com/mwrock/kitchen-nodes/blob/master/LICENSE
+[repo]:             https://github.com/mwrock/kitchen-nodes
 [driver_usage]:     http://docs.kitchen-ci.org/drivers/usage
 [chef_omnibus_dl]:  http://www.getchef.com/chef/install/
