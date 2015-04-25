@@ -49,7 +49,7 @@ provisioner:
   name: nodes
 ```
 
-## <a name="installation"></a> Usage
+## <a name="Usage"></a> Usage
 
 Using `kitchen-nodes` one can expect all previously converged nodes to be represented in a node file and be searchable. For example consider this scenario looking for a primary node in a cluster in order to add a node to join:
 
@@ -77,6 +77,31 @@ primary = search_for_nodes("run_list:*couchbase??server* AND platform:#{node['pl
 node.normal["couchbase-tests"]["primary_ip"] = primary[0]['ipaddress']
 
 ```
+### <a name="vagrant"></a> Using with Vagrant
+
+When using kitchen-nodes with the vagrant driver, make sure you add the following to your `driver_config`:
+
+```
+network:
+  - ["private_network", { type: "dhcp" }]
+```
+
+This will add an additional non-NAT NIC to your vagrant box with an IP reachable from the host and other test nodes.
+
+### <a name="virtualbox"></a> Why is my ohai `ipaddress` different from my node ipaddress on vagrant with VirtualBox?
+
+Ohai will pick up the localhost ipaddress on vagrant boxes using virtualbox. To reset the `node["ipaddress"]` to the reachable ip, add `hurry-up-and-test::set_non_nat_vbox_ip` to the top of your `run_list`. 
+
+```
+suites:
+  - name: my-suite
+    run_list:
+      - recipe[hurry-up-and-test::set_non_nat_vbox_ip]
+      - recipe[cookbook-under-test]
+```
+
+You can add this even if you do not use virtualbox and the recipe will do nothing.
+
 
 ## <a name="development"></a> Development
 
