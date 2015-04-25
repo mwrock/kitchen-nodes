@@ -36,9 +36,11 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
 }
 ```
 
-## <a name="installation"></a> Installation and Setup
+## <a name="installation"></a> Installation
 
-Please read the [Driver usage][driver_usage] page for more details.
+```
+gem install kitchen-nodes
+```
 
 ## <a name="config"></a> Configuration
 
