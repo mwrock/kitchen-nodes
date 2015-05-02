@@ -46,6 +46,7 @@ module Kitchen
             :ipaddress => ipaddress,
             :platform => instance.platform.name.split("-")[0].downcase
           },
+          :normal => config[:attributes],
           :run_list => config[:run_list]
         }
 
