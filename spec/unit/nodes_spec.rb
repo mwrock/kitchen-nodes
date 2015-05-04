@@ -22,7 +22,7 @@ describe Kitchen::Provisioner::Nodes do
     :driver => Kitchen::Driver::Dummy.new
   ) }
   let(:transport) { Kitchen::Transport::Dummy.new }
-  let(:platform) { double("platform", :os_type => nil) }
+  let(:platform) { double("platform", :os_type => nil, :name => 'ubuntu') }
   let(:suite) { double("suite", :name => "suite") }
   let(:state) { { :hostname => "192.168.1.10" } }
   let(:node) { JSON.parse(File.read(subject.node_file), :symbolize_names => true) }
@@ -79,6 +79,7 @@ describe Kitchen::Provisioner::Nodes do
         allow_any_instance_of(Kitchen::Transport::Base::Connection).to(
           receive(:node_execute).and_return({ :data => data })
         )
+        allow(platform).to receive(:name).and_return('windows')
       }
 
       it "sets the ip address to the first reachable IP" do
