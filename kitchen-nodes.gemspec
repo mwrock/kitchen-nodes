@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'net-ping'
   spec.add_dependency 'win32-security'
-  spec.add_dependency 'test-kitchen', '1.4.0.rc.1'
+  spec.add_dependency 'test-kitchen', '~> 1.4'
 
   spec.add_development_dependency 'bundler', '~> 1.3'
   spec.add_development_dependency "fakefs",    "~> 0.4"
