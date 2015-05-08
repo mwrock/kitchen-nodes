@@ -3,4 +3,9 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:test)
 
+require "rubocop/rake_task"
+RuboCop::RakeTask.new(:style) do |task|
+  task.options << "--display-cop-names"
+end
+
 task :default => [:test]
