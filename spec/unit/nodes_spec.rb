@@ -11,7 +11,8 @@ describe Kitchen::Provisioner::Nodes do
   let(:config) { { 
     :test_base_path => "/b",
     :kitchen_root => "/r",
-    :run_list => "cookbook:recipe" 
+    :run_list => "cookbook:recipe",
+    :attributes => {:att_key => 'att_val'}
   } }
   let(:instance) { double(
     "instance",
@@ -55,6 +56,12 @@ describe Kitchen::Provisioner::Nodes do
     subject.create_node
 
     expect(node[:run_list]).to eq config[:run_list]
+  end
+
+  it "sets the normal attributes" do
+    subject.create_node
+
+    expect(node[:normal]).to eq config[:attributes]
   end
 
   it "sets the ip address" do
