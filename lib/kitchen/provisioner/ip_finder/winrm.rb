@@ -17,15 +17,16 @@ module Kitchen
         end
 
         def find_ips
-          out = @connection.node_execute("Get-NetIPConfiguration | % { $_.ipv4address.IPAddress}")
+          out = @connection.node_execute(
+            'Get-NetIPConfiguration | % { $_.ipv4address.IPAddress }')
           data = []
           out[:data].each do |out_data|
-            stdout = out_data[:stdout] 
+            stdout = out_data[:stdout]
             data << stdout.chomp unless stdout.nil?
           end
           data
         end
-      end 
+      end
     end
   end
 end

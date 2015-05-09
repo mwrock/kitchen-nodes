@@ -4,31 +4,29 @@
 #
 # Copyright (C) 2015, Matt Wrock
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #    http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-require "kitchen/provisioner/chef_zero"
-require "kitchen/provisioner/ip_finder"
-require "net/ping"
+require 'kitchen'
+require 'kitchen/provisioner/chef_zero'
+require 'kitchen/provisioner/ip_finder'
+require 'net/ping'
 
 module Kitchen
   module Provisioner
-
     # Nodes provisioner for Kitchen.
     #
     # @author Matt Wrock <matt@mattwrock.com>
     class Nodes < ChefZero
-
       def create_sandbox
         FileUtils.rm(node_file) if File.exist?(node_file)
         super
@@ -36,18 +34,24 @@ module Kitchen
       end
 
       def create_node
-        state = Kitchen::StateFile.new(config[:kitchen_root], instance.name).read
-        ip = state[:hostname]
-        ipaddress = (ip == "127.0.0.1" || ip == "localhost") ? get_reachable_guest_address(state) : ip
+        state = Kitchen::StateFile.new(
+          config[:kitchen_root],
+          instance.name
+        ).read
+
+        ipaddress = state[:hostname]
+        if %w(127.0.0.1 localhost).include?(ipaddress)
+          ipaddress = get_reachable_guest_address(state)
+        end
 
         node = {
-          :id => instance.name,
-          :automatic => {
-            :ipaddress => ipaddress,
-            :platform => instance.platform.name.split("-")[0].downcase
+          id: instance.name,
+          automatic: {
+            ipaddress: ipaddress,
+            platform: instance.platform.name.split('-')[0].downcase
           },
-          :normal => config[:attributes],
-          :run_list => config[:run_list]
+          normal: config[:attributes],
+          run_list: config[:run_list]
         }
 
         FileUtils.mkdir_p(node_dir) unless Dir.exist?(node_dir)
@@ -57,7 +61,7 @@ module Kitchen
       end
 
       def node_dir
-        File.join(config[:test_base_path], "nodes")
+        File.join(config[:test_base_path], 'nodes')
       end
 
       def node_file
@@ -66,16 +70,19 @@ module Kitchen
 
       def get_reachable_guest_address(state)
         active_ips(instance.transport, state).each do |address|
-          next if address == "127.0.0.1"
+          next if address == '127.0.0.1'
           return address if Net::Ping::External.new.ping(address)
         end
-        return nil
       end
 
       def active_ips(transport, state)
         # inject creds into state for legacy drivers
-        state[:password] = instance.driver[:password] if instance.driver[:password]
-        state[:username] = instance.driver[:username] if instance.driver[:username]
+        if instance.driver[:password]
+          state[:password] = instance.driver[:password]
+        end
+        if instance.driver[:username]
+          state[:username] = instance.driver[:username]
+        end
         IpFinder.for_transport(transport, state).find_ips
       end
     end

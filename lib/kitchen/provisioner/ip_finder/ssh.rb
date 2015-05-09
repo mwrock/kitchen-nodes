@@ -7,22 +7,20 @@ module Kitchen
           out, exit_code = node_execute_with_exit_code(command, &block)
 
           if exit_code != 0
-            raise Transport::SshFailed,
-              "SSH exited (#{exit_code}) for command: [#{command}]"
+            fail Transport::SshFailed,
+                 "SSH exited (#{exit_code}) for command: [#{command}]"
           end
           out
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SSH command failed (#{ex.message})"
         end
 
-        def node_execute_with_exit_code(command, &block)
+        def node_execute_with_exit_code(command)
           exit_code = nil
           out = []
           session.open_channel do |channel|
-
             channel.request_pty
             channel.exec(command) do |_ch, _success|
-
               channel.on_data do |_ch, data|
                 out << data
                 yield data if block_given?
@@ -33,7 +31,7 @@ module Kitchen
                 yield data if block_given?
               end
 
-              channel.on_request("exit-status") do |_ch, data|
+              channel.on_request('exit-status') do |_ch, data|
                 exit_code = data.read_long
               end
             end
@@ -69,31 +67,31 @@ module Kitchen
         end
 
         def run_ifconfig
-          response = @connection.node_execute("ifconfig -a")
+          response = @connection.node_execute('ifconfig -a')
           ips = []
-          start_token = "inet addr:"
+          start_token = 'inet addr:'
           response.split(/^\S+/).each do |device|
-            if device.include?("RUNNING") && !device.include?("LOOPBACK")
-              start_idx = device.index(start_token)
-              start_idx += start_token.length unless start_idx.nil?
-              end_idx = device.index(" ", start_idx) unless start_idx.nil?
-              ips << device[start_idx,end_idx - start_idx] unless end_idx.nil?
-            end
+            next if !device.include?('RUNNING') || device.include?('LOOPBACK')
+
+            start_idx = device.index(start_token)
+            start_idx += start_token.length unless start_idx.nil?
+            end_idx = device.index(' ', start_idx) unless start_idx.nil?
+            ips << device[start_idx, end_idx - start_idx] unless end_idx.nil?
           end
           ips
         end
 
         def run_ip_addr
-          response = @connection.node_execute("ip -4 addr show")
+          response = @connection.node_execute('ip -4 addr show')
           ips = []
-          start_token = "inet "
+          start_token = 'inet '
           response.split(/[0-9]+: /).each do |device|
-            unless device.include?("LOOPBACK") || device.include?("NO-CARRIER")
-              start_idx = device.index(start_token)
-              start_idx += start_token.length unless start_idx.nil?
-              end_idx = device.index("/", start_idx) unless start_idx.nil?
-              ips << device[start_idx,end_idx - start_idx] unless end_idx.nil?
-            end
+            next if device.include?('LOOPBACK') || device.include?('NO-CARRIER')
+
+            start_idx = device.index(start_token)
+            start_idx += start_token.length unless start_idx.nil?
+            end_idx = device.index('/', start_idx) unless start_idx.nil?
+            ips << device[start_idx, end_idx - start_idx] unless end_idx.nil?
           end
           ips
         end
