@@ -81,11 +81,8 @@ module Kitchen
 
       def active_ips(transport, state)
         # inject creds into state for legacy drivers
-        if instance.driver[:password]
-          state[:password] = instance.driver[:password]
-        end
-        if instance.driver[:username]
-          state[:username] = instance.driver[:username]
+        [:username, :password].each do |prop|
+          state[prop] = instance.driver[prop] if instance.driver[prop]
         end
         IpFinder.for_transport(transport, state).find_ips
       end
