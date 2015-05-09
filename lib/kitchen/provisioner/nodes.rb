@@ -34,17 +34,26 @@ module Kitchen
       end
 
       def create_node
+        FileUtils.mkdir_p(node_dir) unless Dir.exist?(node_dir)
+        File.open(node_file, 'w') do |out|
+          out << JSON.pretty_generate(node_template)
+        end
+      end
+
+      def ipaddress
         state = Kitchen::StateFile.new(
           config[:kitchen_root],
           instance.name
         ).read
 
-        ipaddress = state[:hostname]
-        if %w(127.0.0.1 localhost).include?(ipaddress)
-          ipaddress = get_reachable_guest_address(state)
+        if %w(127.0.0.1 localhost).include?(state[:hostname])
+          return get_reachable_guest_address(state)
         end
+        state[:hostname]
+      end
 
-        node = {
+      def node_template
+        {
           id: instance.name,
           automatic: {
             ipaddress: ipaddress,
@@ -53,11 +62,6 @@ module Kitchen
           normal: config[:attributes],
           run_list: config[:run_list]
         }
-
-        FileUtils.mkdir_p(node_dir) unless Dir.exist?(node_dir)
-        File.open(node_file, 'w') do |out|
-          out << JSON.pretty_generate(node)
-        end
       end
 
       def node_dir
