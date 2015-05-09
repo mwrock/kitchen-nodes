@@ -1,3 +1,4 @@
+require 'erb'
 require 'fakefs/safe'
 require 'kitchen'
 require 'kitchen/driver/dummy'
@@ -118,40 +119,18 @@ describe Kitchen::Provisioner::Nodes do
     end
 
     context 'platform is *nix' do
+      let(:ifconfig_response) do
+        FakeFS.deactivate!
+        template = File.read('spec/unit/stubs/ifconfig.txt')
+        FakeFS.activate!
+        template.gsub!('1.1.1.1', machine_ips[0])
+        template.gsub!('2.2.2.2', machine_ips[1])
+      end
       let(:transport) { Kitchen::Transport::Ssh.new }
 
       before do
         allow_any_instance_of(Kitchen::Transport::Base::Connection)
-          .to receive(:node_execute) do
-          <<-EOS
-docker0   Link encap:Ethernet  HWaddr 56:84:7a:fe:97:99
-          inet addr:#{machine_ips[0]}  Bcast:0.0.0.0  Mask:255.255.0.0
-          UP BROADCAST MULTICAST  MTU:1500  Metric:1
-          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0
-          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-
-eth0      Link encap:Ethernet  HWaddr 08:00:27:88:0c:a6
-          inet addr:#{machine_ips[1]}  Bcast:10.0.2.255  Mask:255.255.255.0
-          inet6 addr: fe80::a00:27ff:fe88:ca6/64 Scope:Link
-          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:10262 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:7470 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:1000
-          RX bytes:1497781 (1.4 MB)  TX bytes:1701791 (1.7 MB)
-
-lo        Link encap:Local Loopback
-          inet addr:127.0.0.1  Mask:255.0.0.0
-          inet6 addr: ::1/128 Scope:Host
-          UP LOOPBACK RUNNING  MTU:65536  Metric:1
-          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0
-          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-
-          EOS
-        end
+          .to receive(:node_execute).and_return(ifconfig_response)
       end
 
       it 'sets the ip address to the RUNNING IP that is not localhost' do
@@ -161,25 +140,22 @@ lo        Link encap:Local Loopback
       end
 
       context 'ifconfig not supported' do
+        let(:ip_response) do
+          FakeFS.deactivate!
+          template = File.read('spec/unit/stubs/ip.txt')
+          FakeFS.activate!
+          template.gsub!('1.1.1.1', machine_ips[0])
+          template.gsub!('2.2.2.2', machine_ips[1])
+        end
+
         before do
           allow_any_instance_of(Kitchen::Transport::Base::Connection)
             .to receive(:node_execute).with('ifconfig -a')
             .and_raise(Kitchen::Transport::TransportFailed.new(''))
 
           allow_any_instance_of(Kitchen::Transport::Base::Connection)
-            .to receive(:node_execute).with('ip -4 addr show') do
-            <<-EOS
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    inet #{machine_ips[0]}/24 brd 192.168.1.255 scope global wlan0
-       valid_lft forever preferred_lft forever
-5: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
-    inet #{machine_ips[1]}/16 scope global docker0
-       valid_lft forever preferred_lft forever
-            EOS
-          end
+            .to receive(:node_execute).with('ip -4 addr show')
+            .and_return(ip_response)
         end
 
         it 'sets the ip address to the connected IP that is not localhost' do
