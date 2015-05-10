@@ -13,6 +13,9 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
     "ipaddress": "172.17.0.8",
     "platform": "ubuntu"
   },
+  "normal": {
+    "attr1": "val1"
+  }
   "run_list": [
     "recipe[apt]",
     "recipe[couchbase-tests::ipaddress]",
@@ -35,6 +38,8 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
   ]
 }
 ```
+
+The node data includes the node id based on the test-kitchen suite name, the run list assigned to the node, the normal attributes included in the `.kitchen.yml` file, the externally reachable ip address and the platform of the test instance os.
 
 ## <a name="installation"></a> Installation
 
