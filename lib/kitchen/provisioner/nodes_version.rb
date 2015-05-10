@@ -17,8 +17,8 @@
 # limitations under the License.
 
 module Kitchen
+  # Version string for Nodes Kitchen driver
   module Provisioner
-    # Version string for Nodes Kitchen driver
     NODES_VERSION = '0.2.1'
   end
 end

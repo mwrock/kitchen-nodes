@@ -8,4 +8,4 @@ RuboCop::RakeTask.new(:style) do |task|
   task.options << '--display-cop-names'
 end
 
-task default: [:test]
+task default: [:test, :style]

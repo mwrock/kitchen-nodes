@@ -1,6 +1,8 @@
 module Kitchen
   module Transport
     class Winrm < Kitchen::Transport::Base
+      # Monkey patch of test-kitchen winrm transport
+      # that returns stdout
       class Connection < Kitchen::Transport::Base::Connection
         def node_execute(command, &block)
           session.run_powershell_script(command, &block)
@@ -11,6 +13,7 @@ module Kitchen
 
   module Provisioner
     module IpFinder
+      # WinRM implementation for returning active non-localhost IPs
       class Winrm
         def initialize(connection)
           @connection = connection

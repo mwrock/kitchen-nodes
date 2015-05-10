@@ -1,6 +1,8 @@
 module Kitchen
   module Transport
     class Ssh < Kitchen::Transport::Base
+      # Monkey patch of test-kitchen ssh transport
+      # that returns stdout
       class Connection < Kitchen::Transport::Base::Connection
         def node_execute(command, &block)
           return if command.nil?
@@ -47,6 +49,7 @@ module Kitchen
 
   module Provisioner
     module IpFinder
+      # SSH implementation for returning active non-localhost IPs
       class Ssh
         def initialize(connection)
           @connection = connection
