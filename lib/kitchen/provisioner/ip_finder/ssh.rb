@@ -69,7 +69,7 @@ module Kitchen
         end
 
         def run_ifconfig
-          response = @connection.node_execute('ifconfig -a')
+          response = @connection.node_execute('/sbin/ifconfig -a')
           ips = []
           response.split(/^\S+/).each do |device|
             next if !device.include?('RUNNING') || device.include?('LOOPBACK')
@@ -79,7 +79,7 @@ module Kitchen
         end
 
         def run_ip_addr
-          response = @connection.node_execute('ip -4 addr show')
+          response = @connection.node_execute('/sbin/ip -4 addr show')
           ips = []
           response.split(/[0-9]+: /).each do |device|
             next if device.include?('LOOPBACK') || device.include?('NO-CARRIER')

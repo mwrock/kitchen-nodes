@@ -150,11 +150,11 @@ describe Kitchen::Provisioner::Nodes do
 
         before do
           allow_any_instance_of(Kitchen::Transport::Base::Connection)
-            .to receive(:node_execute).with('ifconfig -a')
+            .to receive(:node_execute).with('/sbin/ifconfig -a')
             .and_raise(Kitchen::Transport::TransportFailed.new(''))
 
           allow_any_instance_of(Kitchen::Transport::Base::Connection)
-            .to receive(:node_execute).with('ip -4 addr show')
+            .to receive(:node_execute).with('/sbin/ip -4 addr show')
             .and_return(ip_response)
         end
 
