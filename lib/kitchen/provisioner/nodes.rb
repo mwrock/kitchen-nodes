@@ -29,8 +29,8 @@ module Kitchen
     class Nodes < ChefZero
       def create_sandbox
         FileUtils.rm(node_file) if File.exist?(node_file)
-        super
         create_node
+        super
       end
 
       def create_node
