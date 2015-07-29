@@ -24,3 +24,12 @@ lo        Link encap:Local Loopback
           collisions:0 txqueuelen:0
           RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
+# The following represents the format of ifconfig from CentOS 7.1
+enp0s8: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 3.3.3.3  netmask 255.255.255.0  broadcast 3.3.3.0
+        inet6 fe80::a00:27ff:fe5e:e9b0  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:5e:e9:b0  txqueuelen 1000  (Ethernet)
+        RX packets 7961  bytes 823710 (804.4 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 263  bytes 50868 (49.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0

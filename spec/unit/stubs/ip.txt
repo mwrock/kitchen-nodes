@@ -7,3 +7,8 @@
 5: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
     inet 2.2.2.2/16 scope global docker0
        valid_lft forever preferred_lft forever
+# The following represents the format of ipaddr from CentOS 7.1 (which is the same in this case, but
+# adding for completeness)
+6: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    inet 3.3.3.3/24 brd 3.3.3.255 scope global dynamic enp0s8
+       valid_lft 966sec preferred_lft 966sec
