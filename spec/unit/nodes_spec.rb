@@ -125,6 +125,7 @@ describe Kitchen::Provisioner::Nodes do
         FakeFS.activate!
         template.gsub!('1.1.1.1', machine_ips[0])
         template.gsub!('2.2.2.2', machine_ips[1])
+        template.gsub!('3.3.3.3', machine_ips[2])
       end
       let(:transport) { Kitchen::Transport::Ssh.new }
 
@@ -146,6 +147,7 @@ describe Kitchen::Provisioner::Nodes do
           FakeFS.activate!
           template.gsub!('1.1.1.1', machine_ips[0])
           template.gsub!('2.2.2.2', machine_ips[1])
+          template.gsub!('3.3.3.3', machine_ips[2])
         end
 
         before do

@@ -51,6 +51,7 @@ module Kitchen
     module IpFinder
       # SSH implementation for returning active non-localhost IPs
       class Ssh
+        IP4REGEX = %r{(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})}
         def initialize(connection)
           @connection = connection
         end
@@ -66,6 +67,7 @@ module Kitchen
             return ips unless ips.empty?
             sleep 0.5
           end
+          raise "Unable to retrieve IPs"
         end
 
         def run_ifconfig
@@ -73,7 +75,7 @@ module Kitchen
           ips = []
           response.split(/^\S+/).each do |device|
             next if !device.include?('RUNNING') || device.include?('LOOPBACK')
-            ips << parse_ip(device, 'inet addr:', ' ')
+            ips << IP4REGEX.match(device)[1]
           end
           ips.compact
         end
@@ -81,18 +83,12 @@ module Kitchen
         def run_ip_addr
           response = @connection.node_execute('/sbin/ip -4 addr show')
           ips = []
-          response.split(/[0-9]+: /).each do |device|
+          response.split(/^[0-9]+: /).each do |device|
             next if device.include?('LOOPBACK') || device.include?('NO-CARRIER')
-            ips << parse_ip(device, 'inet ', '/')
+            next if device == ""
+            ips << IP4REGEX.match(device)[1]
           end
           ips.compact
-        end
-
-        def parse_ip(device, start_token, delimiter)
-          start_idx = device.index(start_token)
-          start_idx += start_token.length unless start_idx.nil?
-          end_idx = device.index(delimiter, start_idx) unless start_idx.nil?
-          device[start_idx, end_idx - start_idx] unless end_idx.nil?
         end
       end
     end
