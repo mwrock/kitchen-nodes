@@ -85,6 +85,28 @@ describe Kitchen::Provisioner::Nodes do
       allow(transport).to receive(:connection)
         .and_return(Kitchen::Transport::Base::Connection.new)
     end
+
+    context 'cannot find an ip' do
+      let(:ifconfig_response) do
+        FakeFS.deactivate!
+        template = File.read('spec/unit/stubs/ifconfig.txt')
+        FakeFS.activate!
+        template.gsub!('', machine_ips[0])
+        template.gsub!('', machine_ips[1])
+        template.gsub!('', machine_ips[2])
+      end
+      let(:transport) { Kitchen::Transport::Ssh.new }
+
+      before do
+        allow_any_instance_of(Kitchen::Transport::Base::Connection)
+          .to receive(:node_execute).and_return(ifconfig_response)
+      end
+
+      it 'fails' do
+        expect { subject.create_node }.to raise_error('Unable to retrieve IPs')
+      end
+    end
+
     context 'platform is windows' do
       let(:transport) { Kitchen::Transport::Winrm.new }
 

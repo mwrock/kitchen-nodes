@@ -51,7 +51,7 @@ module Kitchen
     module IpFinder
       # SSH implementation for returning active non-localhost IPs
       class Ssh
-        IP4REGEX = %r{(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})}
+        IP4REGEX = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         def initialize(connection)
           @connection = connection
         end
@@ -67,7 +67,7 @@ module Kitchen
             return ips unless ips.empty?
             sleep 0.5
           end
-          raise "Unable to retrieve IPs"
+          ips
         end
 
         def run_ifconfig
@@ -85,7 +85,7 @@ module Kitchen
           ips = []
           response.split(/^[0-9]+: /).each do |device|
             next if device.include?('LOOPBACK') || device.include?('NO-CARRIER')
-            next if device == ""
+            next if device == ''
             ips << IP4REGEX.match(device)[1]
           end
           ips.compact

@@ -84,7 +84,9 @@ module Kitchen
         [:username, :password].each do |prop|
           state[prop] = instance.driver[prop] if instance.driver[prop]
         end
-        IpFinder.for_transport(transport, state).find_ips
+        ips = IpFinder.for_transport(transport, state).find_ips
+        fail 'Unable to retrieve IPs' if ips.empty?
+        ips
       end
     end
   end
