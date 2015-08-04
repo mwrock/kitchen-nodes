@@ -1,3 +1,4 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (en_US)
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default
     inet 127.0.0.1/8 scope host lo
        valid_lft forever preferred_lft forever

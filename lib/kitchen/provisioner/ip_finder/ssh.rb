@@ -86,7 +86,8 @@ module Kitchen
           response.split(/^[0-9]+: /).each do |device|
             next if device.include?('LOOPBACK') || device.include?('NO-CARRIER')
             next if device == ''
-            ips << IP4REGEX.match(device)[1]
+            found_ips = IP4REGEX.match(device)
+            ips << IP4REGEX.match(device)[1] unless found_ips.nil?
           end
           ips.compact
         end
