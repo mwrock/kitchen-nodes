@@ -17,7 +17,7 @@ module Kitchen
           raise SshFailed, "SSH command failed (#{ex.message})"
         end
 
-        # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+        # rubocop:disable Metrics/AbcSize
         def node_execute_with_exit_code(command)
           exit_code = nil
           out = []
@@ -42,7 +42,7 @@ module Kitchen
           session.loop
           [out.join("\n"), exit_code]
         end
-        # rubocop:enable  Metrics/MethodLength, Metrics/AbcSize
+        # rubocop:enable Metrics/AbcSize
       end
     end
   end
