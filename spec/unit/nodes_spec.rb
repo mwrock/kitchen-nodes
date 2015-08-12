@@ -13,7 +13,8 @@ describe Kitchen::Provisioner::Nodes do
       test_base_path: '/b',
       kitchen_root: '/r',
       run_list: 'cookbook:recipe',
-      attributes: { att_key: 'att_val' }
+      attributes: { att_key: 'att_val' },
+      client_rb: { environment: 'my_env' }
     }
   end
   let(:instance) do
@@ -57,6 +58,12 @@ describe Kitchen::Provisioner::Nodes do
     expect(node[:id]).to eq instance.name
   end
 
+  it 'sets the environment' do
+    subject.create_node
+
+    expect(node[:chef_environment]).to eq config[:client_rb][:environment]
+  end
+
   it 'sets the runlist' do
     subject.create_node
 
@@ -73,6 +80,16 @@ describe Kitchen::Provisioner::Nodes do
     subject.create_node
 
     expect(node[:automatic][:ipaddress]).to eq state[:hostname]
+  end
+
+  context 'no environment explicitly set' do
+    before { config.delete(:client_rb) }
+
+    it 'sets the environment' do
+      subject.create_node
+
+      expect(node[:chef_environment]).to eq '_default'
+    end
   end
 
   context 'instance is localhost' do

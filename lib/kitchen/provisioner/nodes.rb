@@ -52,9 +52,18 @@ module Kitchen
         state[:hostname]
       end
 
+      def chef_environment
+        env = '_default'
+        if config[:client_rb] && config[:client_rb][:environment]
+          env = config[:client_rb][:environment]
+        end
+        env
+      end
+
       def node_template
         {
           id: instance.name,
+          chef_environment: chef_environment,
           automatic: {
             ipaddress: ipaddress,
             platform: instance.platform.name.split('-')[0].downcase
