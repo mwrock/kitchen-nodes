@@ -35,8 +35,9 @@ module Kitchen
 
       def create_node
         FileUtils.mkdir_p(node_dir) unless Dir.exist?(node_dir)
+        template_to_write = node_template
         File.open(node_file, 'w') do |out|
-          out << JSON.pretty_generate(node_template)
+          out << JSON.pretty_generate(template_to_write)
         end
       end
 
