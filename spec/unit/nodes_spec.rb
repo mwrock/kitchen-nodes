@@ -82,6 +82,32 @@ describe Kitchen::Provisioner::Nodes do
     expect(node[:automatic][:ipaddress]).to eq state[:hostname]
   end
 
+  context 'cannot obtain fqdn' do
+    before do
+      allow_any_instance_of(Kitchen::Transport::Base::Connection)
+        .to receive(:node_execute).with('hostname -f')
+        .and_raise(Kitchen::Transport::TransportFailed.new(''))
+    end
+
+    it 'sets the fqdn to nil' do
+      subject.create_node
+      expect(node[:automatic][:fqdn]).to be_nil
+    end
+  end
+
+  context 'can obtain fqdn' do
+    before do
+      allow_any_instance_of(Kitchen::Transport::Base::Connection)
+        .to receive(:node_execute).with('hostname -f')
+        .and_return('fakehostname')
+    end
+
+    it 'sets the fqdn' do
+      subject.create_node
+      expect(node[:automatic][:fqdn]).to eq 'fakehostname'
+    end
+  end
+
   context 'no environment explicitly set' do
     before { config.delete(:client_rb) }
 

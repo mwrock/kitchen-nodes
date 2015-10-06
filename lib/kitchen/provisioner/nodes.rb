@@ -41,16 +41,33 @@ module Kitchen
         end
       end
 
-      def ipaddress
-        state = Kitchen::StateFile.new(
+      def create_state
+        Kitchen::StateFile.new(
           config[:kitchen_root],
           instance.name
         ).read
+      end
+
+      def ipaddress
+        state = create_state
 
         if %w(127.0.0.1 localhost).include?(state[:hostname])
           return get_reachable_guest_address(state)
         end
         state[:hostname]
+      end
+
+      def fqdn
+        state = create_state
+        [:username, :password].each do |prop|
+          state[prop] = instance.driver[prop] if instance.driver[prop]
+        end
+        begin
+          instance.transport.connection(state)
+            .node_execute('hostname -f')[/(\w|\.)+/]
+        rescue
+          nil
+        end
       end
 
       def chef_environment
@@ -67,7 +84,8 @@ module Kitchen
           chef_environment: chef_environment,
           automatic: {
             ipaddress: ipaddress,
-            platform: instance.platform.name.split('-')[0].downcase
+            platform: instance.platform.name.split('-')[0].downcase,
+            fqdn: fqdn
           },
           normal: config[:attributes],
           run_list: config[:run_list]
