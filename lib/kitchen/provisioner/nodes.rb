@@ -41,15 +41,15 @@ module Kitchen
         end
       end
 
-      def create_state
-        Kitchen::StateFile.new(
+      def state_file
+        @state_file ||= Kitchen::StateFile.new(
           config[:kitchen_root],
           instance.name
         ).read
       end
 
       def ipaddress
-        state = create_state
+        state = state_file
 
         if %w(127.0.0.1 localhost).include?(state[:hostname])
           return get_reachable_guest_address(state)
@@ -58,7 +58,7 @@ module Kitchen
       end
 
       def fqdn
-        state = create_state
+        state = state_file
         [:username, :password].each do |prop|
           state[prop] = instance.driver[prop] if instance.driver[prop]
         end
