@@ -12,7 +12,7 @@ module Kitchen
   end
 
   module Provisioner
-    module IpFinder
+    module Finder
       # WinRM implementation for returning active non-localhost IPs
       class Winrm
         def initialize(connection)
@@ -22,6 +22,17 @@ module Kitchen
         def find_ips
           out = @connection.node_execute(
             'Get-NetIPConfiguration | % { $_.ipv4address.IPAddress }')
+          data = []
+          out[:data].each do |out_data|
+            stdout = out_data[:stdout]
+            data << stdout.chomp unless stdout.nil?
+          end
+          data
+        end
+
+        def find_fqdn
+          out = @connection.node_execute(
+            "[System.Net.Dns]::GetHostByName($env:computername) | FL HostName | Out-String | %{ \"{0}\" -f $_.Split(':')[1].Trim() }")
           data = []
           out[:data].each do |out_data|
             stdout = out_data[:stdout]

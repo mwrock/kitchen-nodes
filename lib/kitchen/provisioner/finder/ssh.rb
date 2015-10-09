@@ -48,7 +48,7 @@ module Kitchen
   end
 
   module Provisioner
-    module IpFinder
+    module Finder
       # SSH implementation for returning active non-localhost IPs
       class Ssh
         IP4REGEX = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
@@ -69,6 +69,12 @@ module Kitchen
           end
           ips
         end
+
+        def find_fqdn
+          @connection.node_execute('hostname -f')[/(\w|\.)+/]
+        end
+
+        private
 
         def run_ifconfig
           response = @connection.node_execute('/sbin/ifconfig -a')

@@ -3,10 +3,10 @@ module Kitchen
     # Locates active IPs that are not localhost
     # there are separate implementations for
     # different kitchen transports
-    module IpFinder
+    module Finder
       def self.for_transport(transport, state)
         transport_string = transport.class.name.split('::').last
-        require("kitchen/provisioner/ip_finder/#{transport_string.downcase}")
+        require("kitchen/provisioner/finder/#{transport_string.downcase}")
 
         connection = transport.connection(state)
         klass = const_get(transport_string)

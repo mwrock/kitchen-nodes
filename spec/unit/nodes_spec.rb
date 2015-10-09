@@ -27,7 +27,7 @@ describe Kitchen::Provisioner::Nodes do
       driver: Kitchen::Driver::Dummy.new
     )
   end
-  let(:transport) { Kitchen::Transport::Dummy.new }
+  let(:transport) { Kitchen::Transport::Ssh.new }
   let(:platform) { double('platform', os_type: nil, name: 'ubuntu') }
   let(:suite) { double('suite', name: 'suite') }
   let(:state) { { hostname: '192.168.1.10' } }
@@ -38,6 +38,11 @@ describe Kitchen::Provisioner::Nodes do
     FileUtils.mkdir_p(config[:test_base_path])
     allow_any_instance_of(Kitchen::StateFile)
       .to receive(:read).and_return(state)
+    allow(transport).to receive(:connection)
+      .and_return(Kitchen::Transport::Base::Connection.new)
+    allow_any_instance_of(Kitchen::Transport::Base::Connection)
+      .to receive(:node_execute).with('hostname -f')
+      .and_return('fakehostname')
   end
   after do
     FakeFS.deactivate!
@@ -82,6 +87,12 @@ describe Kitchen::Provisioner::Nodes do
     expect(node[:automatic][:ipaddress]).to eq state[:hostname]
   end
 
+  it 'sets the fqdn' do
+    subject.create_node
+
+    expect(node[:automatic][:fqdn]).to eq 'fakehostname'
+  end
+
   context 'cannot obtain fqdn' do
     before do
       allow_any_instance_of(Kitchen::Transport::Base::Connection)
@@ -92,19 +103,6 @@ describe Kitchen::Provisioner::Nodes do
     it 'sets the fqdn to nil' do
       subject.create_node
       expect(node[:automatic][:fqdn]).to be_nil
-    end
-  end
-
-  context 'can obtain fqdn' do
-    before do
-      allow_any_instance_of(Kitchen::Transport::Base::Connection)
-        .to receive(:node_execute).with('hostname -f')
-        .and_return('fakehostname')
-    end
-
-    it 'sets the fqdn' do
-      subject.create_node
-      expect(node[:automatic][:fqdn]).to eq 'fakehostname'
     end
   end
 
@@ -125,8 +123,6 @@ describe Kitchen::Provisioner::Nodes do
     before do
       allow_any_instance_of(Net::Ping::External).to receive(:ping)
         .and_return(true)
-      allow(transport).to receive(:connection)
-        .and_return(Kitchen::Transport::Base::Connection.new)
     end
 
     context 'cannot find an ip' do

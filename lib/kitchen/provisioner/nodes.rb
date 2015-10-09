@@ -18,7 +18,7 @@
 
 require 'kitchen'
 require 'kitchen/provisioner/chef_zero'
-require 'kitchen/provisioner/ip_finder'
+require 'kitchen/provisioner/finder'
 require 'net/ping'
 
 module Kitchen
@@ -59,12 +59,11 @@ module Kitchen
 
       def fqdn
         state = state_file
-        [:username, :password].each do |prop|
-          state[prop] = instance.driver[prop] if instance.driver[prop]
-        end
         begin
-          instance.transport.connection(state)
-            .node_execute('hostname -f')[/(\w|\.)+/]
+          [:username, :password].each do |prop|
+            state[prop] = instance.driver[prop] if instance.driver[prop]
+          end
+          Finder.for_transport(instance.transport, state).find_fqdn
         rescue
           nil
         end
@@ -112,7 +111,7 @@ module Kitchen
         [:username, :password].each do |prop|
           state[prop] = instance.driver[prop] if instance.driver[prop]
         end
-        ips = IpFinder.for_transport(transport, state).find_ips
+        ips = Finder.for_transport(transport, state).find_ips
         fail 'Unable to retrieve IPs' if ips.empty?
         ips
       end
