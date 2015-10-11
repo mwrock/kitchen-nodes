@@ -31,14 +31,18 @@ module Kitchen
         end
 
         def find_fqdn
-          out = @connection.node_execute(
-            "[System.Net.Dns]::GetHostByName($env:computername) | FL HostName | Out-String | %{ \"{0}\" -f $_.Split(':')[1].Trim() }")
-          data = []
+          out = @connection.node_execute <<-EOS
+            [System.Net.Dns]::GetHostByName($env:computername) |
+              FL HostName |
+              Out-String |
+              % { \"{0}\" -f $_.Split(':')[1].Trim() }
+          EOS
+          data = ''
           out[:data].each do |out_data|
             stdout = out_data[:stdout]
             data << stdout.chomp unless stdout.nil?
           end
-          data[0]
+          data
         end
       end
     end

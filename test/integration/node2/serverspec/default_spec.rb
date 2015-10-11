@@ -1,19 +1,23 @@
 require 'serverspec'
 require 'json'
 
-if RUBY_PLATFORM=~ /mingw/
+if RUBY_PLATFORM =~ /mingw/
   set :backend, :cmd
-  set :os, :family => 'windows'
+  set :os, family: 'windows'
 else
   set :backend, :exec
 end
 
 describe 'other node' do
-  let(:node) { JSON.parse(IO.read(File.join(ENV['TEMP'] || '/tmp', 'kitchen/other_node.json'))) }
+  let(:node) do
+    JSON.parse(
+      IO.read(File.join(ENV['TEMP'] || '/tmp', 'kitchen/other_node.json'))
+    )
+  end
   let(:ip) { node['automatic']['ipaddress'] }
   let(:fqdn) { node['automatic']['fqdn'] }
   let(:connection) do
-    if RUBY_PLATFORM=~ /mingw/
+    if RUBY_PLATFORM =~ /mingw/
       require 'winrm'
       ::WinRM::WinRMWebService.new(
         "http://#{ip}:5985/wsman",
@@ -37,10 +41,10 @@ describe 'other node' do
   end
 
   describe command('hostname') do
-    its(:stdout) { should_not match /#{fqdn}/ }
+    its(:stdout) { should_not match(/#{Regexp.quote(fqdn)}/) }
   end
 
-  if RUBY_PLATFORM=~ /mingw/
+  if RUBY_PLATFORM =~ /mingw/
     it 'has a computername matching node fqdn' do
       expect(connection.run_cmd('hostname').stdout.chomp).to eq(fqdn)
     end

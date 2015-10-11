@@ -1,2 +1,6 @@
 Metrics/MethodLength:
   Max: 20
+
+AllCops:
+  Exclude:
+  - '.kitchen/**/*'

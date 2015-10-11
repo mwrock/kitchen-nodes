@@ -1,5 +1,3 @@
 source 'https://rubygems.org'
 
-if RUBY_PLATFORM=~ /mingw/
-  gem 'winrm'
-end
+gem 'winrm' if RUBY_PLATFORM =~ /mingw/
