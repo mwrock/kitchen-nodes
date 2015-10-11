@@ -1,0 +1,41 @@
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", { type: "dhcp" }]
+
+provisioner:
+  name: nodes
+
+platforms:
+- name: ubuntu-12.04
+  run_list:
+  - recipe[apt]
+  driver_config:
+    box: hashicorp/precise64
+
+- name: windows-2012R2
+  driver_config:
+    gui: true
+    box: mwrock/Windows2012R2
+
+suites:
+- name: node1
+  run_list:
+  - recipe[hurry-up-and-test::set_non_nat_vbox_ip]
+  - recipe[node-tests::node1]
+  attributes:
+    consul:
+      config:
+        bootstrap_expect: 2
+        server: true
+
+- name: node2
+  run_list:
+  - recipe[hurry-up-and-test::set_non_nat_vbox_ip]
+  - recipe[node-tests::node2]
+  attributes:
+    consul:
+      config:
+        bootstrap_expect: 2
+        server: true

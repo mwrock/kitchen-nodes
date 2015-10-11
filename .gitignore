@@ -2,7 +2,9 @@
 *.rbc
 .bundle
 .config
+.kitchen/
 .yardoc
+Berksfile.lock
 Gemfile.lock
 InstalledFiles
 _yardoc

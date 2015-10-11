@@ -1,0 +1,22 @@
+{
+  "id": "node1-ubuntu-1204",
+  "chef_environment": "_default",
+  "automatic": {
+    "ipaddress": "192.168.1.147",
+    "platform": "ubuntu",
+    "fqdn": "node1-ubuntu-1204"
+  },
+  "normal": {
+    "consul": {
+      "config": {
+        "bootstrap_expect": 2,
+        "server": true
+      }
+    }
+  },
+  "run_list": [
+    "recipe[apt]",
+    "recipe[hurry-up-and-test::set_non_nat_vbox_ip]",
+    "recipe[node-tests::node1]"
+  ]
+}

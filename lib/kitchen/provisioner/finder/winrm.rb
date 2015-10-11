@@ -38,7 +38,7 @@ module Kitchen
             stdout = out_data[:stdout]
             data << stdout.chomp unless stdout.nil?
           end
-          data
+          data[0]
         end
       end
     end

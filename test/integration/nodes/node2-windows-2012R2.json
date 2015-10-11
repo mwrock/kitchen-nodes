@@ -1,0 +1,21 @@
+{
+  "id": "node2-windows-2012R2",
+  "chef_environment": "_default",
+  "automatic": {
+    "ipaddress": "192.168.1.150",
+    "platform": "windows",
+    "fqdn": "WIN-70EEPS83GN7"
+  },
+  "normal": {
+    "consul": {
+      "config": {
+        "bootstrap_expect": 2,
+        "server": true
+      }
+    }
+  },
+  "run_list": [
+    "recipe[hurry-up-and-test::set_non_nat_vbox_ip]",
+    "recipe[node-tests::node2]"
+  ]
+}

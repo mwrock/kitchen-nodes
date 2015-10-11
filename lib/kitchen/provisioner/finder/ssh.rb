@@ -71,7 +71,7 @@ module Kitchen
         end
 
         def find_fqdn
-          @connection.node_execute('hostname -f')[/(\w|\.)+/]
+          @connection.node_execute('hostname -f').chomp
         end
 
         private
