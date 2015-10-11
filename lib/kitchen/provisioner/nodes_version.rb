@@ -19,6 +19,6 @@
 module Kitchen
   # Version string for Nodes Kitchen driver
   module Provisioner
-    NODES_VERSION = '0.4.2'
+    NODES_VERSION = '0.5.0'
   end
 end
