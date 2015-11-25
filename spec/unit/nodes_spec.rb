@@ -12,7 +12,7 @@ describe Kitchen::Provisioner::Nodes do
     {
       test_base_path: '/b',
       kitchen_root: '/r',
-      run_list: 'cookbook:recipe',
+      run_list: ['recipe[cookbook::default]'],
       attributes: { att_key: 'att_val' },
       client_rb: { environment: 'my_env' }
     }
@@ -73,6 +73,12 @@ describe Kitchen::Provisioner::Nodes do
     subject.create_node
 
     expect(node[:run_list]).to eq config[:run_list]
+  end
+
+  it 'expands the runlist' do
+    subject.create_node
+
+    expect(node[:automatic][:recipes]).to eq ['cookbook::default']
   end
 
   it 'sets the normal attributes' do
