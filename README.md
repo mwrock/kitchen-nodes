@@ -11,7 +11,13 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
   "id": "server-community-ubuntu-1204",
   "automatic": {
     "ipaddress": "172.17.0.8",
-    "platform": "ubuntu"
+    "platform": "ubuntu",
+    "recipes": [
+      "apt::default",
+      "couchbase-tests::ipaddress",
+      "couchbase::server",
+      "export-node"
+    ]
   },
   "normal": {
     "attr1": "val1"
@@ -28,7 +34,13 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
   "id": "second-node-ubuntu-1204",
   "automatic": {
     "ipaddress": "172.17.0.9",
-    "platform": "ubuntu"
+    "platform": "ubuntu",
+    "recipes": [
+      "apt::default",
+      "couchbase-tests::ipaddress",
+      "couchbase::server",
+      "export-node"
+    ]
   },
   "run_list": [
     "recipe[apt]",
