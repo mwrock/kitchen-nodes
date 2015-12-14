@@ -19,27 +19,9 @@
 require 'kitchen'
 require 'kitchen/provisioner/chef_zero'
 require 'kitchen/provisioner/finder'
+require 'kitchen/provisioner/run_list_expansion_from_kitchen'
 require 'net/ping'
 require 'chef/run_list'
-require 'chef/role'
-
-class Chef
-  class RunList
-    # Abstract Base class for expanding a run list. Subclasses must handle
-    # fetching roles from a data source by defining +fetch_role+
-    class RunListExpansion
-      def fetch_role(name, included_by)
-        kitchen_root = Dir.pwd # yes, this is really how Kitchen does it internally
-        test_base_path = File.join(kitchen_root, Kitchen::DEFAULT_TEST_DIR)
-        roles_dir = File.join(test_base_path, 'roles')
-        role_file = File.join(roles_dir, "#{name}.json")
-        Chef::Role.json_create(JSON.parse(File.read(role_file)))
-      rescue Chef::Exceptions::RoleNotFound
-        role_not_found(name, included_by)
-      end
-    end
-  end
-end
 
 module Kitchen
   module Provisioner
@@ -90,8 +72,14 @@ module Kitchen
       end
 
       def recipes
-        rl = config[:run_list].map { |item| ::Chef::RunList::RunListItem.new item }
-        rle = ::Chef::RunList::RunListExpansion.new(chef_environment, rl)
+        rl = config[:run_list].map do |item|
+          ::Chef::RunList::RunListItem.new item
+        end
+        rle = RunListExpansionFromKitchen.new(
+          chef_environment,
+          rl,
+          config[:roles_path]
+        )
         rle.expand
         rle.recipes
       end
@@ -104,6 +92,7 @@ module Kitchen
         env
       end
 
+      # rubocop:disable Metrics/AbcSize
       def node_template
         {
           id: instance.name,
@@ -118,6 +107,7 @@ module Kitchen
           run_list: config[:run_list]
         }
       end
+      # rubocop:enable Metrics/AbcSize
 
       def node_dir
         File.join(config[:test_base_path], 'nodes')
