@@ -32,6 +32,7 @@ module Kitchen
       def create_sandbox
         FileUtils.rm(node_file) if File.exist?(node_file)
         create_node
+      ensure
         super
       end
 
