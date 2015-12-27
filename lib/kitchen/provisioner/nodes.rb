@@ -79,6 +79,7 @@ module Kitchen
         rle = RunListExpansionFromKitchen.new(
           chef_environment,
           rl,
+          nil,
           config[:roles_path]
         )
         rle.expand

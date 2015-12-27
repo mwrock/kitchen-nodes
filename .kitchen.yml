@@ -6,6 +6,7 @@ driver:
 
 provisioner:
   name: nodes
+  roles_path: test/fixtures/roles
 
 platforms:
 - name: ubuntu-12.04
@@ -22,7 +23,7 @@ platforms:
 suites:
 - name: node1
   run_list:
-  - recipe[hurry-up-and-test::set_non_nat_vbox_ip]
+  - role[test_role]
   - recipe[node-tests::node1]
   attributes:
     consul:

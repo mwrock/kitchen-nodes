@@ -1,0 +1,10 @@
+{
+  "name": "test_role",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+  },
+  "run_list": [
+    "recipe[hurry-up-and-test::set_non_nat_vbox_ip]"
+  ]
+}
