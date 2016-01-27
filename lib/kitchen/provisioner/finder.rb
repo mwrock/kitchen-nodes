@@ -4,15 +4,22 @@ module Kitchen
     # there are separate implementations for
     # different kitchen transports
     module Finder
-      def self.for_transport(transport, state)
-        transport_string = transport.class.name.split('::').last
-        require("kitchen/provisioner/finder/#{transport_string.downcase}")
+      @finder_registry = {}
 
-        connection = transport.connection(state)
-        klass = const_get(transport_string)
-        object = klass.new(connection)
-        object
+      def self.for_transport(transport, state)
+        @finder_registry.each do |registered_transport, finder|
+          if transport.class <= registered_transport
+            return finder.new(transport.connection(state))
+          end
+        end
+      end
+
+      def self.register_finder(transport, finder)
+        @finder_registry[transport] = finder
       end
     end
   end
 end
+
+require 'kitchen/provisioner/finder/ssh'
+require 'kitchen/provisioner/finder/winrm'

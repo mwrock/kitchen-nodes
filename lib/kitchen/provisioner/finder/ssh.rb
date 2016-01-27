@@ -52,6 +52,9 @@ module Kitchen
       # SSH implementation for returning active non-localhost IPs
       class Ssh
         IP4REGEX = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+
+        Finder.register_finder(Kitchen::Transport::Ssh, self)
+
         def initialize(connection)
           @connection = connection
         end

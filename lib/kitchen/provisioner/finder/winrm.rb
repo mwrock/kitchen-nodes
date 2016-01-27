@@ -15,6 +15,8 @@ module Kitchen
     module Finder
       # WinRM implementation for returning active non-localhost IPs
       class Winrm
+        Finder.register_finder(Kitchen::Transport::Winrm, self)
+
         def initialize(connection)
           @connection = connection
         end
