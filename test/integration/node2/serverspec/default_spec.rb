@@ -40,6 +40,10 @@ describe 'other node' do
     expect(ip).not_to eq('127.0.0.1')
   end
 
+  it 'has a valid ip' do
+    expect(ip).to match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)
+  end
+
   describe command('hostname') do
     its(:stdout) { should_not match(/#{Regexp.quote(fqdn)}/) }
   end
