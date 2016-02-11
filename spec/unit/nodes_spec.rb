@@ -157,6 +157,7 @@ describe Kitchen::Provisioner::Nodes do
 
       before do
         data = machine_ips.map { |ip| { stdout: "#{ip}\r\n" } }
+        data = data.insert(0, { stdout: "\r\n" })
         allow_any_instance_of(Kitchen::Transport::Base::Connection).to(
           receive(:node_execute).and_return(data: data)
         )

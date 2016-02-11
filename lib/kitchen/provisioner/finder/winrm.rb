@@ -27,7 +27,7 @@ module Kitchen
           data = []
           out[:data].each do |out_data|
             stdout = out_data[:stdout]
-            data << stdout.chomp unless stdout.nil?
+            data << stdout.chomp unless stdout.nil? || stdout.chomp.empty?
           end
           data
         end
