@@ -9,8 +9,8 @@ module Kitchen
           out, exit_code = node_execute_with_exit_code(command, &block)
 
           if exit_code != 0
-            fail Transport::SshFailed,
-                 "SSH exited (#{exit_code}) for command: [#{command}]"
+            raise Transport::SshFailed,
+                  "SSH exited (#{exit_code}) for command: [#{command}]"
           end
           out
         rescue Net::SSH::Exception => ex

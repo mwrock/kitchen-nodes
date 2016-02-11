@@ -11,7 +11,7 @@ def search_for_nodes(query, timeout = 120)
   end
 
   if nodes.count == 0 || !nodes[0].key?('ipaddress')
-    fail "Unable to find any nodes meeting the search criteria '#{query}'!"
+    raise "Unable to find any nodes meeting the search criteria '#{query}'!"
   end
 
   nodes

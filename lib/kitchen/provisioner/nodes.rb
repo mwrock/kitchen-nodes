@@ -132,7 +132,7 @@ module Kitchen
           state[prop] = instance.driver[prop] if instance.driver[prop]
         end
         ips = Finder.for_transport(transport, state).find_ips
-        fail 'Unable to retrieve IPs' if ips.empty?
+        raise 'Unable to retrieve IPs' if ips.empty?
         ips
       end
     end
