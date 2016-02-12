@@ -42,7 +42,7 @@ describe Kitchen::Provisioner::Nodes do
       .and_return(Kitchen::Transport::Base::Connection.new)
     allow_any_instance_of(Kitchen::Transport::Base::Connection)
       .to receive(:node_execute).with('hostname -f')
-      .and_return('fakehostname')
+      .and_return("fakehostname\n\n")
   end
   after do
     FakeFS.deactivate!
