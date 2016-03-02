@@ -84,6 +84,7 @@ module Kitchen
           ips = []
           response.split(/^\S+/).each do |device|
             next if !device.include?('RUNNING') || device.include?('LOOPBACK')
+            next if IP4REGEX.match(device).nil?
             ips << IP4REGEX.match(device)[1]
           end
           ips.compact
