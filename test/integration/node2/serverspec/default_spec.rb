@@ -44,8 +44,11 @@ describe 'other node' do
     expect(ip).to match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)
   end
 
-  describe command('hostname') do
-    its(:stdout) { should_not match(/#{Regexp.quote(fqdn)}/) }
+  # Skip this test on the 2008 box bc its not sysprepped....
+  unless ENV['computername'] =~ /VAGRANT\-2008R2/i
+    describe command('hostname') do
+      its(:stdout) { should_not match(/#{Regexp.quote(fqdn)}/) }
+    end
   end
 
   if RUBY_PLATFORM =~ /mingw/
