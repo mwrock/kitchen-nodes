@@ -156,7 +156,7 @@ describe Kitchen::Provisioner::Nodes do
       let(:transport) { Kitchen::Transport::Winrm.new }
 
       before do
-        data = machine_ips.map { |ip| { stdout: "#{ip}\r\n" } }
+        data = machine_ips.map { |ip| { stdout: "IPv4 Address .: #{ip}\r\n" } }
         data = data.insert(0, stdout: "\r\n")
         allow_any_instance_of(Kitchen::Transport::Base::Connection).to(
           receive(:node_execute).and_return(data: data)
@@ -172,6 +172,8 @@ describe Kitchen::Provisioner::Nodes do
 
       context 'only the last ip is reachable' do
         before do
+          allow_any_instance_of(Net::Ping::TCP).to receive(:ping)
+            .and_return(false)
           allow_any_instance_of(Net::Ping::External).to receive(:ping)
             .and_return(false)
           allow_any_instance_of(Net::Ping::External).to receive(:ping)

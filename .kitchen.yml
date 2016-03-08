@@ -20,6 +20,11 @@ platforms:
     gui: true
     box: mwrock/Windows2012R2
 
+- name: windows-2008R2
+  driver_config:
+    gui: true
+    box: opentable/win-2008r2-datacenter-amd64-nocm
+
 suites:
 - name: node1
   run_list:

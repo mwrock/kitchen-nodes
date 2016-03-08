@@ -122,8 +122,15 @@ module Kitchen
       def get_reachable_guest_address(state)
         active_ips(instance.transport, state).each do |address|
           next if address == '127.0.0.1'
-          return address if Net::Ping::External.new.ping(address)
+          return address if reachable?(address)
         end
+      end
+
+      def reachable?(address)
+        Net::Ping::External.new.ping(address) ||
+          Net::Ping::TCP.new(address, 5985).ping ||
+          Net::Ping::TCP.new(address, 5986).ping ||
+          Net::Ping::TCP.new(address, 22).ping
       end
 
       def active_ips(transport, state)
