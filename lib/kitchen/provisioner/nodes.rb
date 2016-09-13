@@ -112,7 +112,7 @@ module Kitchen
       # rubocop:enable Metrics/AbcSize
 
       def node_dir
-        File.join(config[:test_base_path], 'nodes')
+        config[:nodes_path] || File.join(config[:test_base_path], 'nodes')
       end
 
       def node_file
