@@ -23,7 +23,8 @@ module Kitchen
 
         def find_ips
           out = @connection.node_execute(
-            '(ipconfig) -match \'IPv[46] Address\'')
+            '(ipconfig) -match \'IPv[46] Address\''
+          )
           data = []
           out[:data].each do |out_data|
             stdout = out_data[:stdout]

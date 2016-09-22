@@ -1,4 +1,4 @@
-require 'erb'
+﻿require 'erb'
 require 'fakefs/safe'
 require 'kitchen'
 require 'kitchen/driver/dummy'

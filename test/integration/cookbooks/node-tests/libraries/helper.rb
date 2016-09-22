@@ -1,4 +1,4 @@
-require 'timeout'
+﻿require 'timeout'
 
 def search_for_nodes(query, timeout = 120)
   nodes = []
@@ -10,7 +10,7 @@ def search_for_nodes(query, timeout = 120)
     end
   end
 
-  if nodes.count == 0 || !nodes[0].key?('ipaddress')
+  if nodes.count.zero? || !nodes[0].key?('ipaddress')
     raise "Unable to find any nodes meeting the search criteria '#{query}'!"
   end
 

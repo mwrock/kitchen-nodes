@@ -1,4 +1,4 @@
-require 'serverspec'
+﻿require 'serverspec'
 require 'json'
 
 if RUBY_PLATFORM =~ /mingw/

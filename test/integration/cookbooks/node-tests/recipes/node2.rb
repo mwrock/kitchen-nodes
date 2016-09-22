@@ -1,5 +1,6 @@
-first_node = search_for_nodes(
-  "run_list:*node1* AND platform:#{node['platform']}")
+﻿first_node = search_for_nodes(
+  "run_list:*node1* AND platform:#{node['platform']}"
+)
 
 ruby_block 'Save first attributes' do
   block do

@@ -1,4 +1,4 @@
-module Kitchen
+﻿module Kitchen
   module Provisioner
     # Locates active IPs that are not localhost
     # there are separate implementations for

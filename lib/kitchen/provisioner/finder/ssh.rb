@@ -1,4 +1,4 @@
-module Kitchen
+﻿module Kitchen
   module Transport
     class Ssh < Kitchen::Transport::Base
       # Monkey patch of test-kitchen ssh transport
@@ -8,7 +8,7 @@ module Kitchen
           return if command.nil?
           out, exit_code = node_execute_with_exit_code(command, &block)
 
-          if exit_code != 0
+          if exit_code.nonzero?
             raise Transport::SshFailed,
                   "SSH exited (#{exit_code}) for command: [#{command}]"
           end
@@ -61,7 +61,7 @@ module Kitchen
 
         def find_ips
           ips = []
-          (0..5).each do
+          5.times do
             begin
               ips = run_ifconfig
             rescue Kitchen::Transport::TransportFailed
