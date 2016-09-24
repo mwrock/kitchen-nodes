@@ -1,7 +1,22 @@
 # Change Log
 
-## [0.7.0](https://github.com/mwrock/kitchen-nodes/tree/0.7.0) (2016-03-08)
-[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.6.6...0.7.0)
+## [0.8.0](https://github.com/mwrock/kitchen-nodes/tree/0.8.0) (2016-09-24)
+[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.7.0...0.8.0)
+
+**Closed issues:**
+
+- Searching fqdn and ip on windows breaks [\#28](https://github.com/mwrock/kitchen-nodes/issues/28)
+- Nodes returned from search are missing attributes from ohai? [\#24](https://github.com/mwrock/kitchen-nodes/issues/24)
+- policyfile support [\#14](https://github.com/mwrock/kitchen-nodes/issues/14)
+
+**Merged pull requests:**
+
+- run kitchen tests in travis/docker [\#27](https://github.com/mwrock/kitchen-nodes/pull/27) ([mwrock](https://github.com/mwrock))
+- update rubies in travis [\#26](https://github.com/mwrock/kitchen-nodes/pull/26) ([mwrock](https://github.com/mwrock))
+- Put node object to the "nodes\_path" if defined [\#25](https://github.com/mwrock/kitchen-nodes/pull/25) ([legal90](https://github.com/legal90))
+
+## [v0.7.0](https://github.com/mwrock/kitchen-nodes/tree/v0.7.0) (2016-03-08)
+[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.6.6...v0.7.0)
 
 **Implemented enhancements:**
 
