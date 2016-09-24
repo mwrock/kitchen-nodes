@@ -5,7 +5,7 @@ module Kitchen
       # that returns stdout
       class Connection < Kitchen::Transport::Base::Connection
         def node_execute(command, &block)
-          session.run_powershell_script(command, &block)
+          unelevated_session.run(command, &block)
         end
       end
     end
@@ -41,10 +41,7 @@ module Kitchen
               % { \"{0}\" -f $_.Split(':')[1].Trim() }
           EOS
           data = ''
-          out[:data].each do |out_data|
-            stdout = out_data[:stdout]
-            data << stdout.chomp unless stdout.nil?
-          end
+          data = out.stdout.chomp unless out.stdout.nil?
           data
         end
       end

@@ -19,13 +19,11 @@ describe 'other node' do
   let(:connection) do
     if RUBY_PLATFORM =~ /mingw/
       require 'winrm'
-      ::WinRM::WinRMWebService.new(
-        "http://#{ip}:5985/wsman",
-        :plaintext,
+      ::WinRM::Connection.new(
+        endpoint: "http://#{ip}:5985/wsman",
         user: 'vagrant',
-        pass: 'vagrant',
-        basic_auth_only: true
-      )
+        password: 'vagrant'
+      ).shell(:cmd)
     else
       Net::SSH.start(
         ip,
@@ -53,7 +51,7 @@ describe 'other node' do
 
   if RUBY_PLATFORM =~ /mingw/
     it 'has a computername matching node fqdn' do
-      expect(connection.run_cmd('hostname').stdout.chomp).to eq(fqdn)
+      expect(connection.run('hostname').stdout.chomp).to eq(fqdn)
     end
   else
     it 'has a computername matching node fqdn' do
