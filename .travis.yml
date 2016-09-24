@@ -1,8 +1,21 @@
 language: ruby
 
-rvm:
-- 2.3.1
-- ruby-head
+matrix:
+  include:
+  - rvm: 2.3.1
+  - rvm: ruby-head
+  - rvm: 2.3.1
+    services: docker
+    sudo: required
+    before_script:
+      - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
+    script:
+      - bundle exec kitchen verify
+    after_failure:
+      - cat .kitchen/logs/kitchen.log
+    env:
+      - UBUNTU=14.04
+      - KITCHEN_YAML=.kitchen.travis.yml
 
 branches:
   only:
