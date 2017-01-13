@@ -28,14 +28,15 @@ platforms:
 suites:
 - name: node1
   run_list:
-  - role[test_role]
+  - role[test_json_role]
+  - role[test_ruby_role]
   - recipe[node-tests::node1]
   attributes:
     consul:
       config:
         bootstrap_expect: 2
         server: true
-
+        
 - name: node2
   run_list:
   - recipe[hurry-up-and-test::set_non_nat_vbox_ip]
