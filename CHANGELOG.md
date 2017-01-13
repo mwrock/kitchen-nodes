@@ -1,7 +1,19 @@
 # Change Log
 
-## [0.8.0](https://github.com/mwrock/kitchen-nodes/tree/0.8.0) (2016-09-24)
-[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.7.0...0.8.0)
+## [0.9.0](https://github.com/mwrock/kitchen-nodes/tree/0.9.0) (2017-01-12)
+[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.8.0...0.9.0)
+
+**Closed issues:**
+
+- Trouble searching the node [\#23](https://github.com/mwrock/kitchen-nodes/issues/23)
+- Working Example: Nginx Balancer + 2 App Nodes [\#22](https://github.com/mwrock/kitchen-nodes/issues/22)
+
+**Merged pull requests:**
+
+- Add support for loading roles from .rb and .json [\#31](https://github.com/mwrock/kitchen-nodes/pull/31) ([dullyouth](https://github.com/dullyouth))
+
+## [v0.8.0](https://github.com/mwrock/kitchen-nodes/tree/v0.8.0) (2016-09-24)
+[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.7.0...v0.8.0)
 
 **Closed issues:**
 
