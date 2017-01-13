@@ -1,5 +1,5 @@
 {
-  "name": "test_role",
+  "name": "test_json_role",
   "chef_type": "role",
   "json_class": "Chef::Role",
   "default_attributes": {

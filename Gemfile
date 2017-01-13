@@ -2,10 +2,10 @@
 
 gemspec
 
-gem 'kitchen-vagrant'
-gem 'kitchen-docker'
 gem 'berkshelf'
 gem 'chef'
-gem 'winrm-fs', '~> 1.0'
+gem 'kitchen-docker'
+gem 'kitchen-vagrant'
 gem 'pry'
 gem 'rb-readline'
+gem 'winrm-fs', '~> 1.0'

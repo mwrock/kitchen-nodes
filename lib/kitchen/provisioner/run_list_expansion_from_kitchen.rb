@@ -28,8 +28,8 @@ module Kitchen
       end
 
       def fetch_role(name, included_by)
-        role_file = File.join(@role_dir, "#{name}.json")
-        ::Chef::Role.json_create(JSON.parse(File.read(role_file)))
+        role_file = File.join(@role_dir, name)
+        ::Chef::Role.from_disk(role_file)
       rescue ::Chef::Exceptions::RoleNotFound
         role_not_found(name, included_by)
       end
