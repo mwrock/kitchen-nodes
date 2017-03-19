@@ -6,7 +6,9 @@ require 'kitchen/provisioner/nodes'
 require 'kitchen/transport/dummy'
 require 'kitchen/transport/winrm'
 require 'kitchen/transport/ssh'
+require 'winrm'
 
+# rubocop:disable Metrics/BlockLength
 describe Kitchen::Provisioner::Nodes do
   let(:config) do
     {
@@ -156,10 +158,11 @@ describe Kitchen::Provisioner::Nodes do
       let(:transport) { Kitchen::Transport::Winrm.new }
 
       before do
-        data = machine_ips.map { |ip| { stdout: "IPv4 Address .: #{ip}\r\n" } }
-        data = data.insert(0, stdout: "\r\n")
+        data = WinRM::Output.new
+        data << { stdout: "\r\n" }
+        machine_ips.map { |ip| data << { stdout: "IPv4 Address .: #{ip}\r\n" } }
         allow_any_instance_of(Kitchen::Transport::Base::Connection).to(
-          receive(:node_execute).and_return(data: data)
+          receive(:node_execute).and_return(data)
         )
         allow(platform).to receive(:name).and_return('windows')
       end
