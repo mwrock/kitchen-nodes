@@ -1,7 +1,18 @@
 # Change Log
 
-## [0.9.0](https://github.com/mwrock/kitchen-nodes/tree/0.9.0) (2017-01-12)
-[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.8.0...0.9.0)
+## [0.9.1](https://github.com/mwrock/kitchen-nodes/tree/0.9.1) (2017-03-19)
+[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.9.0...0.9.1)
+
+**Closed issues:**
+
+- Failed to complete \#converge action: \[undefined method `\[\]' for \#\<WinRM::Output:0x4adaab8\>\] [\#32](https://github.com/mwrock/kitchen-nodes/issues/32)
+
+**Merged pull requests:**
+
+- Fix winrm [\#33](https://github.com/mwrock/kitchen-nodes/pull/33) ([mwrock](https://github.com/mwrock))
+
+## [v0.9.0](https://github.com/mwrock/kitchen-nodes/tree/v0.9.0) (2017-01-13)
+[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.8.0...v0.9.0)
 
 **Closed issues:**
 
