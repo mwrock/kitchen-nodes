@@ -15,10 +15,10 @@ platforms:
   driver_config:
     box: hashicorp/precise64
 
-- name: windows-2012R2
+- name: windows-2016
   driver_config:
     gui: true
-    box: mwrock/Windows2012R2
+    box: mwrock/Windows2016
 
 - name: windows-2008R2
   driver_config:
