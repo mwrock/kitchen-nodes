@@ -26,9 +26,8 @@ module Kitchen
             '(ipconfig) -match \'IPv[46] Address\''
           )
           data = []
-          out[:data].each do |out_data|
-            stdout = out_data[:stdout]
-            data << Regexp.last_match[1] if stdout.chomp =~ /:\s*(\S+)/
+          out.stdout.lines.each do |line|
+            data << Regexp.last_match[1] if line.chomp =~ /:\s*(\S+)/
           end
           data
         end
