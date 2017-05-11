@@ -54,7 +54,8 @@ module Kitchen
       def ipaddress
         state = state_file
 
-        if %w(127.0.0.1 localhost).include?(state[:hostname])
+        if config[:ignore_statefile_hostname] || \
+           %w(127.0.0.1 localhost).include?(state[:hostname])
           return get_reachable_guest_address(state)
         end
         state[:hostname]
