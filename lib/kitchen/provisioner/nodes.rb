@@ -29,8 +29,9 @@ module Kitchen
     #
     # @author Matt Wrock <matt@mattwrock.com>
     class Nodes < ChefZero
+      default_config :reset_node_files, false
+
       def create_sandbox
-        FileUtils.rm(node_file) if File.exist?(node_file)
         create_node
       ensure
         super
@@ -38,9 +39,24 @@ module Kitchen
 
       def create_node
         FileUtils.mkdir_p(node_dir) unless Dir.exist?(node_dir)
-        template_to_write = node_template
+
+        node_def = if File.exist?(node_file)
+                     updated_node_def
+                   else
+                     node_template
+                   end
+        return unless node_def
+
         File.open(node_file, 'w') do |out|
-          out << JSON.pretty_generate(template_to_write)
+          out << JSON.pretty_generate(node_def)
+        end
+      end
+
+      def updated_node_def
+        if config[:reset_node_files]
+          node_template
+        else
+          nil
         end
       end
 
