@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'kitchen/provisioner/nodes_version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'kitchen-nodes'
+  spec.name          = 'kitchen-nodes-scalp42'
   spec.version       = Kitchen::Provisioner::NODES_VERSION
   spec.authors       = ['Matt Wrock']
   spec.email         = ['matt@mattwrock.com']
