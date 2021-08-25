@@ -122,7 +122,9 @@ module Kitchen
             recipes: recipes
           },
           normal: config[:attributes],
-          run_list: config[:run_list]
+          run_list: config[:run_list],
+          named_run_list: config[:named_run_list],
+          policy_group: config[:policy_group]
         }
       end
       # rubocop:enable Metrics/AbcSize
