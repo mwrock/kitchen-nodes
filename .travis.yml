@@ -2,9 +2,9 @@ language: ruby
 
 matrix:
   include:
-  - rvm: 2.3.1
+  - rvm: 3.0.2
   - rvm: ruby-head
-  - rvm: 2.3.1
+  - rvm: 3.0.2
     services: docker
     sudo: required
     before_script:
@@ -14,7 +14,7 @@ matrix:
     after_failure:
       - cat .kitchen/logs/kitchen.log
     env:
-      - UBUNTU=14.04
+      - UBUNTU=20.04
       - KITCHEN_YAML=.kitchen.travis.yml
 
 branches:
