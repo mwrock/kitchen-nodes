@@ -5,8 +5,11 @@ matrix:
   - rvm: 2.5.3
   - os: linux
     dist: focal
+    before_install:
+      - sudo apt-get -y install libxml2-dev
     addons:
       apt:
+        update: true
         sources:
           - chef-stable-focal
         packages:
@@ -19,7 +22,7 @@ matrix:
       - chef --version
     script:
       - CHEF_LICENSE=accept-no-persist
-      - time bundle exec kitchen verify
+      - time kitchen verify
     after_failure:
       - cat .kitchen/logs/kitchen.log
     env:
