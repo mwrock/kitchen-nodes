@@ -5,6 +5,7 @@
 .kitchen/
 .yardoc
 Berksfile.lock
+Policyfile.lock.json
 Gemfile.lock
 InstalledFiles
 _yardoc

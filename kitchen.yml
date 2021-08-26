@@ -9,21 +9,19 @@ provisioner:
   roles_path: test/fixtures/roles
 
 platforms:
-- name: ubuntu-12.04
+- name: ubuntu-20.04
   run_list:
   - recipe[apt]
-  driver_config:
-    box: hashicorp/precise64
 
 - name: windows-2016
   driver_config:
     gui: true
-    box: mwrock/Windows2016
+    box: tas50/windows_2016
 
-- name: windows-2008R2
+- name: windows-2019
   driver_config:
     gui: true
-    box: opentable/win-2008r2-datacenter-amd64-nocm
+    box: tas50/windows_2019
 
 suites:
 - name: node1
@@ -36,7 +34,7 @@ suites:
       config:
         bootstrap_expect: 2
         server: true
-        
+
 - name: node2
   run_list:
   - recipe[hurry-up-and-test::set_non_nat_vbox_ip]

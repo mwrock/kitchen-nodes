@@ -16,7 +16,8 @@ describe Kitchen::Provisioner::Nodes do
       kitchen_root: '/r',
       run_list: ['recipe[cookbook::default]'],
       attributes: { att_key: 'att_val' },
-      client_rb: { environment: 'my_env' }
+      client_rb: { environment: 'my_env' },
+      reset_node_files: false
     }
   end
   let(:instance) do
@@ -53,10 +54,44 @@ describe Kitchen::Provisioner::Nodes do
 
   subject { Kitchen::Provisioner::Nodes.new(config).finalize_config!(instance) }
 
-  it 'creates node' do
-    subject.create_node
+  describe '#create_node' do
+    context 'node file does not exist' do
+      before do
+        allow(Dir).to receive(:exist?).and_return(false)
+      end
 
-    expect(File).to exist(subject.node_file)
+      it 'creates node' do
+        subject.create_node
+
+        expect(File).to exist(subject.node_file)
+      end
+    end
+    context 'node file exists' do
+      before do
+        allow(Dir).to receive(:exist?).and_return(true)
+        expect(File).to receive(:exist?).with(subject.node_file).and_return(true)
+      end
+
+      context 'config[:reset_node_files] = false' do
+        it 'does not update the node file' do
+          expect(File).not_to receive(:open)
+
+          subject.create_node
+        end
+      end
+
+      context 'config[:reset_node_files] = true' do
+        before do
+          config[:reset_node_files] = true
+        end
+
+        it 'updates the node file' do
+          expect(File).to receive(:open)
+
+          subject.create_node
+        end
+      end
+    end
   end
 
   it 'sets the id' do
