@@ -26,13 +26,14 @@ before_script:
 matrix:
   include:
   - script:
+      - chef gem install fakefs
       - rspec spec
   - services: docker
     script:
       - chef gem build ./kitchen-nodes.gemspec
       - chef gem install ./kitchen-nodes*.gem kitchen-docker
       - time kitchen verify
-    after_failure:
+    after_script:
       - cat .kitchen/logs/kitchen.log
 
 branches:
