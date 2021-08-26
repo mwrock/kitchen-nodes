@@ -3,11 +3,20 @@ language: ruby
 matrix:
   include:
   - rvm: 2.5.3
-  - rvm: 2.5.3
+  - os: linux
+    dist: xenial
+    addons:
+      apt:
+        sources:
+          - chef-current-xenial
+        packages:
+          - chef-workstation
     services: docker
     sudo: required
     before_script:
       - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
+      - eval "$(chef shell-init bash)"
+      - chef --version
     script:
       - CHEF_LICENSE=accept-no-persist
       - time bundle exec kitchen verify
