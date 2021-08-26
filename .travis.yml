@@ -17,6 +17,7 @@ matrix:
       - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
       - eval "$(chef shell-init bash)"
       - chef --version
+      - chef gem install kitchen-docker
     script:
       - CHEF_LICENSE=accept-no-persist
       - time kitchen verify
