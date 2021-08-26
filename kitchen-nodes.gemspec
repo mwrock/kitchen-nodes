@@ -26,5 +26,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'github_changelog_generator', '>= 1.11.3'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '>= 3.2'
-  spec.add_development_dependency 'cookstyle'
+  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'chefstyle'
 end
