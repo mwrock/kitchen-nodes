@@ -2,8 +2,8 @@ language: ruby
 
 matrix:
   include:
-  - rvm: ruby-head
-  - rvm: ruby-head
+  - rvm: 3.0.2
+  - rvm: 3.0.2
     services: docker
     sudo: required
     before_script:
