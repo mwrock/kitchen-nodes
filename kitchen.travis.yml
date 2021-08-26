@@ -10,6 +10,9 @@ driver:
 provisioner:
   name: nodes
   roles_path: test/fixtures/roles
+  product_name: chef
+  product_version: latest
+  chef_license: accept-no-persist
 
 platforms:
 - name: ubuntu-20.04

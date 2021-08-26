@@ -2,19 +2,20 @@ language: ruby
 
 matrix:
   include:
-  - rvm: 3.0.2
-  - rvm: 3.0.2
+  - rvm: 2.5.3
+  - rvm: 2.5.3
     services: docker
     sudo: required
     before_script:
       - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
     script:
+      - KITCHEN_YAML=kitchen.travis.yml
       - time bundle exec kitchen verify
     after_failure:
       - cat .kitchen/logs/kitchen.log
     env:
       - UBUNTU=20.04
-      - KITCHEN_YAML=kitchen.travis.yml
+      - CHEF_LICENSE=accept-no-persist
 
 branches:
   only:
