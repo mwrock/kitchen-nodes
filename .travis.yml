@@ -4,11 +4,11 @@ matrix:
   include:
   - rvm: 2.5.3
   - os: linux
-    dist: xenial
+    dist: focal
     addons:
       apt:
         sources:
-          - chef-current-xenial
+          - chef-stable-focal
         packages:
           - chef-workstation
     services: docker
