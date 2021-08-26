@@ -10,13 +10,10 @@ matrix:
     addons:
       apt:
         update: true
-        sources:
-          - chef-stable-focal
-        packages:
-          - chef-workstation
     services: docker
     sudo: required
     before_script:
+      - sudo curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -p chef-workstation
       - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
       - eval "$(chef shell-init bash)"
       - chef --version
