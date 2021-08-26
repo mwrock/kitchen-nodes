@@ -16,6 +16,9 @@ provisioner:
 
 platforms:
 - name: ubuntu-20.04
+  driver_config:
+    image: dokken/ubuntu-20.04
+    platform: debian
 
 suites:
 - name: node1
