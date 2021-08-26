@@ -9,13 +9,13 @@ matrix:
     before_script:
       - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
     script:
-      - KITCHEN_YAML=kitchen.travis.yml
+      - CHEF_LICENSE=accept-no-persist
       - time bundle exec kitchen verify
     after_failure:
       - cat .kitchen/logs/kitchen.log
     env:
       - UBUNTU=20.04
-      - CHEF_LICENSE=accept-no-persist
+      - KITCHEN_YAML=kitchen.travis.yml
 
 branches:
   only:
