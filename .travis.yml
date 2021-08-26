@@ -22,14 +22,15 @@ before_script:
   - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
   - eval "$(chef shell-init bash)"
   - chef --version
-  - chef gem install kitchen-docker
 
 matrix:
   include:
   - script:
-      - chef rspec spec
+      - rspec spec
   - services: docker
     script:
+      - chef gem build ./kitchen-nodes.gemspec
+      - chef gem install ./kitchen-nodes*.gem kitchen-docker
       - time kitchen verify
     after_failure:
       - cat .kitchen/logs/kitchen.log
