@@ -1,31 +1,38 @@
-language: ruby
+os: linux
+
+dist: focal
+
+before_install:
+  - sudo apt-get -y install libxml2-dev
+
+addons:
+  apt:
+    update: true
+
+sudo: required
+
+env:
+  global:
+    - UBUNTU=20.04
+    - KITCHEN_YAML=kitchen.travis.yml
+    - CHEF_LICENSE=accept-no-persist
+
+before_script:
+  - sudo curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P 'chef-workstation'
+  - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
+  - eval "$(chef shell-init bash)"
+  - chef --version
+  - chef gem install kitchen-docker
 
 matrix:
   include:
-  - rvm: 2.5.3
-  - os: linux
-    dist: focal
-    before_install:
-      - sudo apt-get -y install libxml2-dev
-    addons:
-      apt:
-        update: true
-    services: docker
-    sudo: required
-    before_script:
-      - sudo curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P 'chef-workstation'
-      - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
-      - eval "$(chef shell-init bash)"
-      - chef --version
-      - chef gem install kitchen-docker
+  - script:
+      - chef rspec spec
+  - services: docker
     script:
-      - CHEF_LICENSE=accept-no-persist
       - time kitchen verify
     after_failure:
       - cat .kitchen/logs/kitchen.log
-    env:
-      - UBUNTU=20.04
-      - KITCHEN_YAML=kitchen.travis.yml
 
 branches:
   only:
