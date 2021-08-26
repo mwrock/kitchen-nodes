@@ -51,7 +51,7 @@
     module Finder
       # SSH implementation for returning active non-localhost IPs
       class Ssh
-        IP4REGEX = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        IP4REGEX = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/.freeze
 
         Finder.register_finder(Kitchen::Transport::Ssh, self)
 

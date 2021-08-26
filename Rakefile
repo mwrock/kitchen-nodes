@@ -1,12 +1,13 @@
 ﻿require 'bundler/gem_tasks'
 require 'github_changelog_generator/task'
 require 'rspec/core/rake_task'
-require 'rubocop/rake_task'
+require 'cookstyle'
 
 RSpec::Core::RakeTask.new(:test)
 
-RuboCop::RakeTask.new(:style) do |task|
-  task.options << '--display-cop-names'
+desc 'Run cookstyle against cookstyle'
+task :style do
+  sh('bundle exec cookstyle --display-cop-names --extra-details')
 end
 
 GitHubChangelogGenerator::RakeTask.new :changelog do |config|

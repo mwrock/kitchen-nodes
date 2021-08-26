@@ -1,8 +1,7 @@
-﻿# -*- encoding: utf-8 -*-
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
 #
-# Copyright (C) 2015, Matt Wrock
+# Copyright:: (C) 2015, Matt Wrock
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -55,8 +54,6 @@ module Kitchen
       def updated_node_def
         if config[:reset_node_files]
           node_template
-        else
-          nil
         end
       end
 
@@ -119,12 +116,12 @@ module Kitchen
             ipaddress: ipaddress,
             platform: instance.platform.name.split('-')[0].downcase,
             fqdn: fqdn,
-            recipes: recipes
+            recipes: recipes,
           },
           normal: config[:attributes],
           run_list: config[:run_list],
           named_run_list: config[:named_run_list],
-          policy_group: config[:policy_group]
+          policy_group: config[:policy_group],
         }
       end
       # rubocop:enable Metrics/AbcSize

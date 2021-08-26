@@ -17,7 +17,7 @@ describe Kitchen::Provisioner::Nodes do
       run_list: ['recipe[cookbook::default]'],
       attributes: { att_key: 'att_val' },
       client_rb: { environment: 'my_env' },
-      reset_node_files: false
+      reset_node_files: false,
     }
   end
   let(:instance) do
@@ -45,7 +45,7 @@ describe Kitchen::Provisioner::Nodes do
       .and_return(Kitchen::Transport::Base::Connection.new)
     allow_any_instance_of(Kitchen::Transport::Base::Connection)
       .to receive(:node_execute).with('hostname -f')
-      .and_return("fakehostname\n\n")
+                                .and_return("fakehostname\n\n")
   end
   after do
     FakeFS.deactivate!
@@ -97,55 +97,55 @@ describe Kitchen::Provisioner::Nodes do
   it 'sets the id' do
     subject.create_node
 
-    expect(node[:id]).to eq instance.name
+    expect(node['id']).to eq instance.name
   end
 
   it 'sets the environment' do
     subject.create_node
 
-    expect(node[:chef_environment]).to eq config[:client_rb][:environment]
+    expect(node['chef_environment']).to eq config[:client_rb][:environment]
   end
 
   it 'sets the runlist' do
     subject.create_node
 
-    expect(node[:run_list]).to eq config[:run_list]
+    expect(node['run_list']).to eq config[:run_list]
   end
 
   it 'expands the runlist' do
     subject.create_node
 
-    expect(node[:automatic][:recipes]).to eq ['cookbook::default']
+    expect(node['automatic']['recipes']).to eq ['cookbook::default']
   end
 
   it 'sets the normal attributes' do
     subject.create_node
 
-    expect(node[:normal]).to eq config[:attributes]
+    expect(node['normal']).to eq config[:attributes]
   end
 
   it 'sets the ip address' do
     subject.create_node
 
-    expect(node[:automatic][:ipaddress]).to eq state[:hostname]
+    expect(node['automatic']['ipaddress']).to eq state[:hostname]
   end
 
   it 'sets the fqdn' do
     subject.create_node
 
-    expect(node[:automatic][:fqdn]).to eq 'fakehostname'
+    expect(node['automatic']['fqdn']).to eq 'fakehostname'
   end
 
   context 'cannot obtain fqdn' do
     before do
       allow_any_instance_of(Kitchen::Transport::Base::Connection)
         .to receive(:node_execute).with('hostname -f')
-        .and_raise(Kitchen::Transport::TransportFailed.new(''))
+                                  .and_raise(Kitchen::Transport::TransportFailed.new(''))
     end
 
     it 'sets the fqdn to nil' do
       subject.create_node
-      expect(node[:automatic][:fqdn]).to be_nil
+      expect(node['automatic']['fqdn']).to be_nil
     end
   end
 
@@ -155,7 +155,7 @@ describe Kitchen::Provisioner::Nodes do
     it 'sets the environment' do
       subject.create_node
 
-      expect(node[:chef_environment]).to eq '_default'
+      expect(node['chef_environment']).to eq '_default'
     end
   end
 
@@ -205,7 +205,7 @@ describe Kitchen::Provisioner::Nodes do
       it 'sets the ip address to the first reachable IP' do
         subject.create_node
 
-        expect(node[:automatic][:ipaddress]).to eq machine_ips.first
+        expect(node['automatic']['ipaddress']).to eq machine_ips.first
       end
 
       context 'only the last ip is reachable' do
@@ -221,7 +221,7 @@ describe Kitchen::Provisioner::Nodes do
         it 'sets the ip address to the last IP' do
           subject.create_node
 
-          expect(node[:automatic][:ipaddress]).to eq machine_ips.last
+          expect(node['automatic']['ipaddress']).to eq machine_ips.last
         end
       end
     end
@@ -245,7 +245,7 @@ describe Kitchen::Provisioner::Nodes do
       it 'sets the ip address to the RUNNING IP that is not localhost' do
         subject.create_node
 
-        expect(node[:automatic][:ipaddress]).to eq machine_ips[1]
+        expect(node['automatic']['ipaddress']).to eq machine_ips[1]
       end
 
       context 'ifconfig not supported' do
@@ -261,17 +261,17 @@ describe Kitchen::Provisioner::Nodes do
         before do
           allow_any_instance_of(Kitchen::Transport::Base::Connection)
             .to receive(:node_execute).with('/sbin/ifconfig -a')
-            .and_raise(Kitchen::Transport::TransportFailed.new(''))
+                                      .and_raise(Kitchen::Transport::TransportFailed.new(''))
 
           allow_any_instance_of(Kitchen::Transport::Base::Connection)
             .to receive(:node_execute).with('/sbin/ip -4 addr show')
-            .and_return(ip_response)
+                                      .and_return(ip_response)
         end
 
         it 'sets the ip address to the connected IP that is not localhost' do
           subject.create_node
 
-          expect(node[:automatic][:ipaddress]).to eq machine_ips[0]
+          expect(node['automatic']['ipaddress']).to eq machine_ips[0]
         end
       end
     end

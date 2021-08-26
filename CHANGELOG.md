@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.10.0](https://github.com/mwrock/kitchen-nodes/tree/0.10.0) (2021-08-26)
+[Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.9.1...0.10.0)
+
+**Merged pull requests:**
+
+- merge scalp42 changes, add name_run_list and policy_group to template, removed version constraints to work with latest versions of dependencies [\#33](https://github.com/mwrock/kitchen-nodes/pull/42) ([mwrock](https://github.com/mwrock))
+
+
 ## [0.9.1](https://github.com/mwrock/kitchen-nodes/tree/0.9.1) (2017-03-19)
 [Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.9.0...0.9.1)
 
