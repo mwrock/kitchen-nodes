@@ -29,7 +29,7 @@ describe 'other node' do
         ip,
         'vagrant',
         password: 'vagrant',
-        paranoid: false
+        verify_host_key: :never
       )
     end
   end

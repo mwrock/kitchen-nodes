@@ -35,6 +35,9 @@ suites:
 - name: node2
   run_list:
   - recipe[node-tests::node2]
+  verifier:
+    inspec_tests:
+      - test/integration/default
   attributes:
     consul:
       config:
