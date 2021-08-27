@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'A Test Kitchen Provisioner for Chef Nodes'
   spec.summary       = spec.description
   spec.homepage      = ''
-  spec.license       = 'Apache 2.0'
+  spec.license       = 'Apache-2.0'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = []

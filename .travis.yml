@@ -6,7 +6,7 @@ sudo: required
 
 env:
   global:
-    - UBUNTU=20.04
+#    - UBUNTU=20.04
     - KITCHEN_YAML=kitchen.travis.yml
     - CHEF_LICENSE=accept-no-persist
 
@@ -24,7 +24,7 @@ matrix:
   - services: docker
     script:
       - chef gem build ./kitchen-nodes.gemspec
-      - chef gem install ./kitchen-nodes*.gem kitchen-docker
+      - chef gem install ./kitchen-nodes*.gem kitchen-docker chef
       - time kitchen verify
     after_script:
       - cat .kitchen/logs/kitchen.log

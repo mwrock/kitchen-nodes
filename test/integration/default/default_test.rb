@@ -2,7 +2,7 @@
 
 # The InSpec reference, with examples and extensive documentation, can be
 # found at https://www.inspec.io/docs/reference/resources/
-require 'chef/handler'
+#require 'chef/handler'
 
 def chef_node_attribute_data
   node_data = node.to_h

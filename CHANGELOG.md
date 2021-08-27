@@ -5,7 +5,11 @@
 
 **Merged pull requests:**
 
-- merge scalp42 changes, add name_run_list and policy_group to template, removed version constraints to work with latest versions of dependencies [\#33](https://github.com/mwrock/kitchen-nodes/pull/42) ([mwrock](https://github.com/mwrock))
+- merge scalp42 changes
+  - added reset_node_files option, default is false, determines if nodes file should be updated or left unchanged between kitchen runs
+- add name_run_list and policy_group to template
+- removed version constraints to work with latest versions of dependencies [\#33](https://github.com/mwrock/kitchen-nodes/pull/42) ([stromweld](https://github.com/stromweld))
+- Updated travis-ci tests and unit tests
 
 
 ## [0.9.1](https://github.com/mwrock/kitchen-nodes/tree/0.9.1) (2017-03-19)
