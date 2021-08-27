@@ -12,4 +12,10 @@ Style/StringLiterals:
   EnforcedStyle: single_quotes
 
 Style/PercentLiteralDelimiters:
-  PreferredDelimiters: { "default" => "()", "%i" => "[]", "%I" => "[]", "%r" => "{}", "%w" => "()", "%W" => "[]" }
+  PreferredDelimiters:
+    default: '()'
+    '%i': '[]'
+    '%I': '[]'
+    '%r': '{}'
+    '%w': '()'
+    '%W': '[]
