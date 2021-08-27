@@ -70,13 +70,14 @@ module Kitchen
         if %w(127.0.0.1 localhost).include?(state[:hostname])
           return get_reachable_guest_address(state)
         end
+
         state[:hostname]
       end
 
       def fqdn
         state = state_file
         begin
-          %i[username, password].each do |prop|
+          %i[username password].each do |prop|
             state[prop] = instance.driver[prop] if instance.driver[prop]
           end
           Finder.for_transport(instance.transport, state).find_fqdn
@@ -150,7 +151,7 @@ module Kitchen
 
       def active_ips(transport, state)
         # inject creds into state for legacy drivers
-        %i[username, password].each do |prop|
+        %i[username password].each do |prop|
           state[prop] = instance.driver[prop] if instance.driver[prop]
         end
         ips = Finder.for_transport(transport, state).find_ips
