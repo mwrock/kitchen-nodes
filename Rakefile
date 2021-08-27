@@ -27,4 +27,4 @@ GitHubChangelogGenerator::RakeTask.new :changelog do |config|
   ]
 end
 
-task default: [:test, :style]
+task default: %i[test style]

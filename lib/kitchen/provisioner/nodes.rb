@@ -76,7 +76,7 @@ module Kitchen
       def fqdn
         state = state_file
         begin
-          [:username, :password].each do |prop|
+          %i[username, password].each do |prop|
             state[prop] = instance.driver[prop] if instance.driver[prop]
           end
           Finder.for_transport(instance.transport, state).find_fqdn
@@ -150,11 +150,12 @@ module Kitchen
 
       def active_ips(transport, state)
         # inject creds into state for legacy drivers
-        [:username, :password].each do |prop|
+        %i[username, password].each do |prop|
           state[prop] = instance.driver[prop] if instance.driver[prop]
         end
         ips = Finder.for_transport(transport, state).find_ips
         raise 'Unable to retrieve IPs' if ips.empty?
+
         ips
       end
     end
