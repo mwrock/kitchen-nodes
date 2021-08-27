@@ -14,9 +14,6 @@ provisioner:
   product_version: latest
   chef_license: accept-no-persist
 
-verifier:
-  name: inspec
-
 platforms:
 - name: ubuntu-20.04
   driver_config:
@@ -38,9 +35,6 @@ suites:
 - name: node2
   run_list:
   - recipe[node-tests::node2]
-  verifier:
-    inspec_tests:
-      - test/integration/default
   attributes:
     consul:
       config:

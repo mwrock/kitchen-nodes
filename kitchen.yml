@@ -9,9 +9,6 @@ provisioner:
   roles_path: test/fixtures/roles
   reset_node_files: true
 
-verifier:
-  name: inspec
-
 platforms:
 - name: ubuntu-20.04
   run_list:
@@ -43,9 +40,6 @@ suites:
   run_list:
   - recipe[hurry-up-and-test::set_non_nat_vbox_ip]
   - recipe[node-tests::node2]
-  verifier:
-    inspec_tests:
-      - test/integration/default
   attributes:
     consul:
       config:

@@ -18,4 +18,4 @@ Style/PercentLiteralDelimiters:
     '%I': '[]'
     '%r': '{}'
     '%w': '()'
-    '%W': '[]
+    '%W': '[]'
