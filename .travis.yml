@@ -10,12 +10,10 @@ matrix:
     sudo: required
     env:
       - KITCHEN_YAML=kitchen.travis.yml
-      - CHEF_LICENSE=accept-no-persist
     before_script:
-      # - sudo curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P 'chef-workstation'
       - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
-      # - eval "$(chef shell-init bash)"
-      # - chef --version
+      - sudo locale-gen en_US.UTF-8
+      - sudo echo 'LANG=en_US.UTF-8' >> /etc/environment
     script:
       - time bundle exec kitchen verify
     after_failure:
