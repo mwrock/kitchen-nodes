@@ -5,14 +5,14 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:test)
 
 begin
-  require "rubocop/rake_task"
-  require "chefstyle"
-  desc "Run Chefstyle tests"
+  require 'rubocop/rake_task'
+  require 'chefstyle'
+  desc 'Run Chefstyle tests'
   RuboCop::RakeTask.new(:style) do |task|
-    task.options += ["--display-cop-names", "--extra-details"]
+    task.options += ['--display-cop-names', '--extra-details']
   end
 rescue LoadError
-  puts "chefstyle gem is not installed. bundle install first to make sure all dependencies are installed."
+  puts 'chefstyle gem is not installed. bundle install first to make sure all dependencies are installed.'
 end
 
 GitHubChangelogGenerator::RakeTask.new :changelog do |config|

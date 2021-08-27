@@ -23,14 +23,14 @@ describe Kitchen::Provisioner::Nodes do
   let(:driver)          { Kitchen::Driver::Dummy.new }
   let(:transport)       { Kitchen::Transport::Ssh.new }
   let(:state_file)      { { hostname: '192.168.1.10' } }
-  let(:node) { JSON.parse(File.read(provisioner.node_file), symbolize_names: true) }
+  let(:node) { JSON.parse(File.read(provisioner.node_file), symbolize_names: false) }
 
   let(:config) do
     {
       test_base_path: '/b',
       kitchen_root: '/r',
       run_list: ['recipe[cookbook::default]'],
-      attributes: { att_key: 'att_val' },
+      attributes: { 'att_key' => 'att_val' },
       client_rb: { environment: 'my_env' },
       named_run_list: 'testing',
       policy_group: 'test',
@@ -68,7 +68,6 @@ describe Kitchen::Provisioner::Nodes do
 
   it 'creates node' do
     provisioner.create_node
-    #raise "TEST1 = #{node.inspect}"
   end
 
   describe '#create_node' do
@@ -113,37 +112,37 @@ describe Kitchen::Provisioner::Nodes do
 
   it 'sets the id' do
     provisioner.create_node
-    expect(node[:id]).to eq instance.name
+    expect(node['id']).to eq instance.name
   end
 
   it 'sets the environment' do
     provisioner.create_node
-    expect(node[:chef_environment]).to eq config[:client_rb][:environment]
+    expect(node['chef_environment']).to eq config[:client_rb][:environment]
   end
 
   it 'sets the runlist' do
     provisioner.create_node
-    expect(node[:run_list]).to eq config[:run_list]
+    expect(node['run_list']).to eq config[:run_list]
   end
 
   it 'expands the runlist' do
     provisioner.create_node
-    expect(node[:automatic][:recipes]).to eq ['cookbook::default']
+    expect(node['automatic']['recipes']).to eq ['cookbook::default']
   end
 
   it 'sets the normal attributes' do
     provisioner.create_node
-    expect(node[:normal]).to eq config[:attributes]
+    expect(node['normal']).to eq config[:attributes]
   end
 
   it 'sets the ip address' do
     provisioner.create_node
-    expect(node[:automatic][:ipaddress]).to eq state_file[:hostname]
+    expect(node['automatic']['ipaddress']).to eq state_file[:hostname]
   end
 
   it 'sets the fqdn' do
     provisioner.create_node
-    expect(node[:automatic][:fqdn]).to eq 'fakehostname'
+    expect(node['automatic']['fqdn']).to eq 'fakehostname'
   end
 
   context 'cannot obtain fqdn' do
@@ -153,7 +152,7 @@ describe Kitchen::Provisioner::Nodes do
 
     it 'sets the fqdn to nil' do
       provisioner.create_node
-      expect(node[:automatic][:fqdn]).to be_nil
+      expect(node['automatic']['fqdn']).to be_nil
     end
   end
 
@@ -162,7 +161,7 @@ describe Kitchen::Provisioner::Nodes do
 
     it 'sets the environment' do
       provisioner.create_node
-      expect(node[:chef_environment]).to eq '_default'
+      expect(node['chef_environment']).to eq '_default'
     end
   end
 
@@ -207,7 +206,7 @@ describe Kitchen::Provisioner::Nodes do
 
       it 'sets the ip address to the first reachable IP' do
         provisioner.create_node
-        expect(node[:automatic][:ipaddress]).to eq machine_ips.first
+        expect(node['automatic']['ipaddress']).to eq machine_ips.first
       end
 
       context 'only the last ip is reachable' do
@@ -219,7 +218,7 @@ describe Kitchen::Provisioner::Nodes do
 
         it 'sets the ip address to the last IP' do
           provisioner.create_node
-          expect(node[:automatic][:ipaddress]).to eq machine_ips.last
+          expect(node['automatic']['ipaddress']).to eq machine_ips.last
         end
       end
     end
@@ -241,7 +240,7 @@ describe Kitchen::Provisioner::Nodes do
 
       it 'sets the ip address to the RUNNING IP that is not localhost' do
         provisioner.create_node
-        expect(node[:automatic][:ipaddress]).to eq machine_ips[1]
+        expect(node['automatic']['ipaddress']).to eq machine_ips[1]
       end
 
       context 'ifconfig not supported' do
@@ -256,13 +255,12 @@ describe Kitchen::Provisioner::Nodes do
 
         before do
           allow_any_instance_of(Kitchen::Transport::Base::Connection).to receive(:node_execute).with('/sbin/ifconfig -a').and_raise(Kitchen::Transport::TransportFailed.new(''))
-
           allow_any_instance_of(Kitchen::Transport::Base::Connection).to receive(:node_execute).with('/sbin/ip -4 addr show').and_return(ip_response)
         end
 
         it 'sets the ip address to the connected IP that is not localhost' do
           provisioner.create_node
-          expect(node[:automatic][:ipaddress]).to eq machine_ips[0]
+          expect(node['automatic']['ipaddress']).to eq machine_ips[0]
         end
       end
     end
