@@ -1,32 +1,24 @@
+language: ruby
 os: linux
-
 dist: focal
-
-sudo: required
-
-env:
-  global:
-#    - UBUNTU=20.04
-    - KITCHEN_YAML=kitchen.travis.yml
-    - CHEF_LICENSE=accept-no-persist
-
-before_script:
-  - sudo curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P 'chef-workstation'
-  - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
-  - eval "$(chef shell-init bash)"
-  - chef --version
 
 matrix:
   include:
-  - script:
-      - chef gem install fakefs
-      - rspec spec
-  - services: docker
+  - rvm: 2.7.1
+  - rvm: 2.7.1
+    services: docker
+    sudo: required
+    env:
+      - KITCHEN_YAML=kitchen.travis.yml
+      - CHEF_LICENSE=accept-no-persist
+    before_script:
+      - sudo curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P 'chef-workstation'
+      - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
+      - eval "$(chef shell-init bash)"
+      - chef --version
     script:
-      - chef gem build ./kitchen-nodes.gemspec
-      - chef gem install ./kitchen-nodes*.gem kitchen-docker chef
-      - time kitchen verify
-    after_script:
+      - time bundle exec kitchen verify
+    after_failure:
       - cat .kitchen/logs/kitchen.log
 
 branches:
