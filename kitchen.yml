@@ -7,6 +7,7 @@ driver:
 provisioner:
   name: nodes
   roles_path: test/fixtures/roles
+  reset_node_files: true
 
 platforms:
 - name: ubuntu-20.04

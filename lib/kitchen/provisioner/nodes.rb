@@ -1,8 +1,7 @@
-﻿# -*- encoding: utf-8 -*-
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
 #
-# Copyright (C) 2015, Matt Wrock
+# Copyright:: (C) 2015, Matt Wrock
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -55,8 +54,6 @@ module Kitchen
       def updated_node_def
         if config[:reset_node_files]
           node_template
-        else
-          nil
         end
       end
 
@@ -73,13 +70,14 @@ module Kitchen
         if %w(127.0.0.1 localhost).include?(state[:hostname])
           return get_reachable_guest_address(state)
         end
+
         state[:hostname]
       end
 
       def fqdn
         state = state_file
         begin
-          [:username, :password].each do |prop|
+          %i[username password].each do |prop|
             state[prop] = instance.driver[prop] if instance.driver[prop]
           end
           Finder.for_transport(instance.transport, state).find_fqdn
@@ -119,12 +117,12 @@ module Kitchen
             ipaddress: ipaddress,
             platform: instance.platform.name.split('-')[0].downcase,
             fqdn: fqdn,
-            recipes: recipes
+            recipes: recipes,
           },
           normal: config[:attributes],
           run_list: config[:run_list],
           named_run_list: config[:named_run_list],
-          policy_group: config[:policy_group]
+          policy_group: config[:policy_group],
         }
       end
       # rubocop:enable Metrics/AbcSize
@@ -153,11 +151,12 @@ module Kitchen
 
       def active_ips(transport, state)
         # inject creds into state for legacy drivers
-        [:username, :password].each do |prop|
+        %i[username password].each do |prop|
           state[prop] = instance.driver[prop] if instance.driver[prop]
         end
         ips = Finder.for_transport(transport, state).find_ips
         raise 'Unable to retrieve IPs' if ips.empty?
+
         ips
       end
     end

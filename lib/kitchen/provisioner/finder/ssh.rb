@@ -6,6 +6,7 @@
       class Connection < Kitchen::Transport::Base::Connection
         def node_execute(command, &block)
           return if command.nil?
+
           out, exit_code = node_execute_with_exit_code(command, &block)
 
           if exit_code.nonzero?
@@ -51,7 +52,7 @@
     module Finder
       # SSH implementation for returning active non-localhost IPs
       class Ssh
-        IP4REGEX = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        IP4REGEX = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/.freeze
 
         Finder.register_finder(Kitchen::Transport::Ssh, self)
 
@@ -68,6 +69,7 @@
               ips = run_ip_addr
             end
             return ips unless ips.empty?
+
             sleep 0.5
           end
           ips
@@ -85,6 +87,7 @@
           response.split(/^\S+/).each do |device|
             next if !device.include?('RUNNING') || device.include?('LOOPBACK')
             next if IP4REGEX.match(device).nil?
+
             ips << IP4REGEX.match(device)[1]
           end
           ips.compact
@@ -96,6 +99,7 @@
           response.split(/^[0-9]+: /).each do |device|
             next if device.include?('LOOPBACK') || device.include?('NO-CARRIER')
             next if device == ''
+
             found_ips = IP4REGEX.match(device)
             ips << IP4REGEX.match(device)[1] unless found_ips.nil?
           end

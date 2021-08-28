@@ -3,17 +3,22 @@ driver:
   name: docker
   username: vagrant
   provision_command:
-    - usermod -p $(echo vagrant | openssl passwd -1 -stdin) vagrant
-    - locale-gen en_US.UTF-8
-    - dpkg-reconfigure locales
+    - sudo usermod -p $(echo vagrant | openssl passwd -1 -stdin) vagrant
+    - sudo locale-gen en_US.UTF-8
+    - sudo echo 'LANG=en_US.UTF-8' >> /etc/environment
 
 provisioner:
   name: nodes
   roles_path: test/fixtures/roles
-  require_chef_omnibus: latest
+  product_name: chef
+  product_version: latest
+  chef_license: accept-no-persist
 
 platforms:
 - name: ubuntu-20.04
+  driver_config:
+    image: dokken/ubuntu-20.04
+    platform: debian
 
 suites:
 - name: node1

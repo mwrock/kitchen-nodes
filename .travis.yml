@@ -1,21 +1,23 @@
 language: ruby
+os: linux
+dist: focal
 
 matrix:
   include:
-  - rvm: 3.0.2
-  - rvm: ruby-head
-  - rvm: 3.0.2
+  - rvm: 2.7.1
+  - rvm: 2.7.1
     services: docker
     sudo: required
+    env:
+      - KITCHEN_YAML=kitchen.travis.yml
     before_script:
       - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
+      - sudo locale-gen en_US.UTF-8
+      - sudo dpkg-reconfigure locales
     script:
-      - bundle exec kitchen verify
+      - time bundle exec kitchen verify
     after_failure:
       - cat .kitchen/logs/kitchen.log
-    env:
-      - UBUNTU=20.04
-      - KITCHEN_YAML=.kitchen.travis.yml
 
 branches:
   only:

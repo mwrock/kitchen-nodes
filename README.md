@@ -6,7 +6,7 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
 
 ### Example nodes:
 
-```
+```json
 {
   "id": "server-community-ubuntu-1204",
   "automatic": {
@@ -21,15 +21,19 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
   },
   "normal": {
     "attr1": "val1"
-  }
+  },
   "run_list": [
     "recipe[apt]",
     "recipe[couchbase-tests::ipaddress]",
     "recipe[couchbase::server]",
     "recipe[export-node]"
-  ]
+  ],
+  "named_run_list" : null,
+  "policy_group": null
 }
+```
 
+```json
 {
   "id": "second-node-ubuntu-1204",
   "automatic": {
@@ -47,11 +51,13 @@ The nodes provisioner extends the `chef-zero` provisioner along with all of its 
     "recipe[couchbase-tests::ipaddress]",
     "recipe[couchbase-tests::default]",
     "recipe[export-node]"
-  ]
+  ],
+  "named_run_list" : null,
+  "policy_group": null
 }
 ```
 
-The node data includes the node id based on the test-kitchen suite name, the run list assigned to the node, the normal attributes included in the `.kitchen.yml` file, the externally reachable ip address and the platform of the test instance os.
+The node data includes the node id based on the test-kitchen suite name, the run list assigned to the node, the normal attributes included in the `kitchen.yml` file, the externally reachable ip address and the platform of the test instance os.
 
 ## <a name="installation"></a> Installation
 
@@ -102,7 +108,7 @@ When using kitchen-nodes with the vagrant driver, make sure you add the followin
 
 ```
 network:
-  - ["private_network", { type: "dhcp" }]
+  - ["private_network", "type: \"dhcp\""]
 ```
 
 This will add an additional non-NAT NIC to your vagrant box with an IP reachable from the host and other test nodes.
@@ -120,7 +126,6 @@ suites:
 ```
 
 You can add this even if you do not use virtualbox and the recipe will do nothing.
-
 
 ## <a name="development"></a> Development
 
@@ -151,4 +156,4 @@ Apache 2.0 (see [LICENSE][license])
 [license]:          https://github.com/mwrock/kitchen-nodes/blob/master/LICENSE
 [repo]:             https://github.com/mwrock/kitchen-nodes
 [driver_usage]:     http://docs.kitchen-ci.org/drivers/usage
-[chef_omnibus_dl]:  http://www.getchef.com/chef/install/
+[chef_downloads]:   https://downloads.chef.io/

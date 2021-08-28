@@ -1,12 +1,18 @@
 ﻿require 'bundler/gem_tasks'
 require 'github_changelog_generator/task'
 require 'rspec/core/rake_task'
-require 'rubocop/rake_task'
 
 RSpec::Core::RakeTask.new(:test)
 
-RuboCop::RakeTask.new(:style) do |task|
-  task.options << '--display-cop-names'
+begin
+  require 'rubocop/rake_task'
+  require 'chefstyle'
+  desc 'Run Chefstyle tests'
+  RuboCop::RakeTask.new(:style) do |task|
+    task.options += ['--display-cop-names', '--extra-details']
+  end
+rescue LoadError
+  puts 'chefstyle gem is not installed. bundle install first to make sure all dependencies are installed.'
 end
 
 GitHubChangelogGenerator::RakeTask.new :changelog do |config|
@@ -21,4 +27,4 @@ GitHubChangelogGenerator::RakeTask.new :changelog do |config|
   ]
 end
 
-task default: [:test, :style]
+task default: %i[test style]

@@ -1,8 +1,7 @@
-﻿# -*- encoding: utf-8 -*-
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
 #
-# Copyright (C) 2015, Matt Wrock
+# Copyright:: (C) 2015, Matt Wrock
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
