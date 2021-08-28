@@ -3,13 +3,20 @@
 ## [0.10.0](https://github.com/mwrock/kitchen-nodes/tree/0.10.0) (2021-08-26)
 [Full Changelog](https://github.com/mwrock/kitchen-nodes/compare/v0.9.1...0.10.0)
 
+**Closed issues:**
+
+- test-kitchen dependency version is too old [\#40](https://github.com/mwrock/kitchen-nodes/issues/40)
+- can't load 'nodes' provisioner from load path [\#29](https://github.com/mwrock/kitchen-nodes/issues/29)
+- Gem conflict on Windows workstation, not sure how to solve [\#20](https://github.com/mwrock/kitchen-nodes/issues/20)
+
 **Merged pull requests:**
 
 - merge scalp42 changes
   - added reset_node_files option, default is false, determines if nodes file should be updated or left unchanged between kitchen runs
 - add name_run_list and policy_group to template
-- removed version constraints to work with latest versions of dependencies [\#33](https://github.com/mwrock/kitchen-nodes/pull/42) ([stromweld](https://github.com/stromweld))
+- removed version constraints to work with latest versions of dependencies [\#42](https://github.com/mwrock/kitchen-nodes/pull/42) ([stromweld](https://github.com/stromweld))
 - Updated travis-ci tests and unit tests
+- Rubocop fixes [\#43](https://github.com/mwrock/kitchen-nodes/pull/43) ([stromweld](https://github.com/stromweld))
 
 
 ## [0.9.1](https://github.com/mwrock/kitchen-nodes/tree/0.9.1) (2017-03-19)
